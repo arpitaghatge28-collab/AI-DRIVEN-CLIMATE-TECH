@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ClimaMatch AI (Frontend MVP)</title>
+  <style>
+    :root{
+      --bg: #0b0b0e;
+      --card: #14161d;
+      --muted: #9aa4af;
+      --primary: #4a90e2;
+      --accent: #e67e22;
+      --text: #f7f7f7;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:radial-gradient(circle at 20% -10%, rgba(74,144,226,.15), transparent 40%), radial-gradient(circle at 100% 0%, rgba(230,126,34,.15), transparent 40%), linear-gradient(#000 0,#111 100%);color:#fff;font-family:Inter, system-ui, Arial}
+    header.hero{
+      background: linear-gradient(135deg, #111, #000);
+      padding: 20px 16px;
+      border-bottom: 1px solid #333;
+      position: sticky; top: 0; z-index: 10;
+    }
+    .brand{
+      display:flex; align-items:center; justify-content:space-between;
+      max-width:1100px; margin:0 auto;
+    }
+    .brand h1{margin:0;font-size:28px; letter-spacing:.5px}
+    .brand .badge{background:#1f1f1f;border:1px solid #333;padding:6px 12px;border-radius:8px;font-size:14px}
+    main{max-width:1100px;margin:20px auto;padding:0 16px}
+    .grid{display:grid;gap:16px}
+    @media (min-width: 900px){
+      .grid{grid-template-columns:1fr 1fr}
+    }
+    .card{
+      background: rgba(20,22,28,.92);
+      border:1px solid #30343a; border-radius:12px; padding:16px;
+      box-shadow: 0 6px 20px rgba(0,0,0,.3);
+    }
+    h2{font-size:20px;margin:6px 0 12px}
+    label{display:block;font-size:14px;margin:8px 0 4px}
+    input[type="text"], input[type="number"], textarea, select{
+      width:100%; padding:10px; border-radius:8px; border:1px solid #333; background:#0e0f13; color:#fff;
+    }
+    textarea{min-height:90px; resize:vertical}
+    .row{display:flex; gap:8px; align-items:center}
+    .row > *{flex:1}
+    button{padding:10px 14px;border-radius:8px;border:0;background:var(--primary);color:white;cursor:pointer}
+    button.secondary{ background:#2a2f37; color:#fff; border:1px solid #444}
+    .section-title{font-size:16px; margin:0 0 6px; color:#ddd}
+    .list{margin:8px 0 0; padding:0; list-style:none}
+    .list-item{padding:10px; border-radius:8px; background:#171923; border:1px solid #2a2f37; margin-bottom:8px}
+    .score{font-weight:bold}
+    .tag{display:inline-block;padding:2px 8px;border-radius:999px;background:#2b2f37;color:#fff;font-size:12px;margin-right:6px}
+    .muted{color:var(--muted)}
+    details{margin-bottom:14px}
+    summary{cursor:pointer; font-weight:bold}
+    .section{margin-bottom:18px}
+  </style>
+  <!-- Optional: MathJax for rendering inline math like $CO_2$ -->
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+</head>
+<body>
+  <header class="hero">
+    <div class="brand">
+      <div style="display:flex;gap:12px;align-items:center;">
+        <div style="width:40px;height:40px;background:#2e3a7a;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:bold">F</div>
+        <h1>Foundathon 3.0</h1>
+      </div>
+      <span class="badge">ClimaMatch AI — Smart Investment Engine</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="section card" aria-labelledby="overview-title">
+      <h2 id="overview-title" style="margin:6px 0 8px;">Overview</h2>
+      <p class="muted" style="margin:0 0 6px;">
+        Submit startup and investor data. The <strong>ClimaMatch AI</strong> computes a risk score, an impact score, and suggests investor matches. This is a front-end MVP for demonstration; a real deployment requires a backend, authentication, and secure data storage.
+      </p>
+      <details open>
+        <summary>How scoring works</summary>
+        <p style="margin:8px 0 0;">
+          Risk score is influenced by revenue, burn rate, and growth. Impact score combines ESG score and CO2 reduction potential.
+          Inline math: the CO2 impact is modeled as $Impact \approx ESG/10 + CO2/10$ (values normalized to 0–10).
+        </p>
+      </details>
+    </section>
+
+    <section class="grid" aria-label="Submission sections">
+      <!-- Startup Submission -->
+      <section class="card" id="startup-section">
+        <h2>Startup Submission</h2>
+        <form id="startupForm" autocomplete="off">
+          <div class="row">
+            <div style="flex:2;">
+              <label for="startupName">Startup Name</label>
+              <input type="text" id="startupName" required placeholder="EcoNova Energy" />
+            </div>
+            <div style="width:18px"></div>
+            <div style="flex:1;">
+              <label for="sector">Sector</label>
+              <select id="sector" required>
+                <option value="Climate Tech">Climate Tech</option>
+                <option value="Energy">Energy</option>
+                <option value="Agriculture">Agriculture</option>
+                <option value="Transport">Transport</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row" style="margin-top:8px">
+            <div style="flex:1;">
+              <label for="revenue">Annual Revenue ($)</label>
+              <input type="number" id="revenue" min="0" step="0.01" placeholder="0" required />
+            </div>
+            <div style="width:8px"></div>
+            <div style="flex:1;">
+              <label for="burnRate">Burn Rate ($/yr)</label>
+              <input type="number" id="burnRate" min="0" step="0.01" placeholder="0" required />
+            </div>
+          </div>
+
+          <div class="row" style="margin-top:8px">
+            <div style="flex:1;">
+              <label for="teamSize">Team Size</label>
+              <input type="number" id="teamSize" min="1" required />
+            </div>
+            <div style="width:8px"></div>
+            <div style="flex:1;">
+              <label for="growthRate">Growth Rate (%)</label>
+              <input type="number" id="growthRate" step="0.1" placeholder="25" required />
+            </div>
+          </div>
+
+          <div class="row" style="margin-top:8px">
+            <div style="flex:1;">
+              <label for="esgScore">ESG Score (0-100)</label>
+              <input type="number" id="esgScore" min="0" max="100" required />
+            </div>
+            <div style="width:8px"></div>
+            <div style="flex:1;">
+              <label for="co2Reduction">CO2 Reduction (tonnes/year)</label>
+              <input type="number" id="co2Reduction" min="0" step="0.1" required />
+            </div>
+          </div>
+
+          <div style="margin-top:8px;">
+            <label for="description">Description / Impact Narrative</label>
+            <textarea id="description" placeholder="Describe your solution, market, and impact." ></textarea>
+          </div>
+
+          <div style="margin-top:12px; display:flex; gap:8px;">
+            <button type="submit">Submit Startup</button>
+            <button type="button" class="secondary" onclick="clearStartupForm()">Clear</button>
+          </div>
+        </form>
+
+        <div id="startupStatus" class="muted" style="margin-top:6px;"></div>
+      </section>
+
+      <!-- Investor Submission -->
+      <section class="card" id="investor-section">
+        <h2>Investor Submission</h2>
+        <form id="investorForm" autocomplete="off">
+          <div class="row">
+            <div style="flex:2;">
+              <label for="investorName">Investor Name</label>
+              <input type="text" id="investorName" required placeholder="GreenVentures VC" />
+            </div>
+            <div style="width:8px"></div>
+            <div style="flex:1;">
+              <label for="minInvestment">Min Investment ($)</label>
+              <input type="number" id="minInvestment" min="0" step="0.01" required placeholder="100000" />
+            </div>
+          </div>
+
+          <div style="margin-top:8px;">
+            <label>Sectors of Focus</label>
+            <div class="row" style="flex-wrap:wrap">
+              <span class="tag"><input type="checkbox" value="Climate Tech" class="sectorFocus"> Climate Tech</span>
+              <span class="tag"><input type="checkbox" value="Energy" class="sectorFocus"> Energy</span>
+              <span class="tag"><input type="checkbox" value="Agriculture" class="sectorFocus"> Agriculture</span>
+              <span class="tag"><input type="checkbox" value="Transport" class="sectorFocus"> Transport</span>
+              <span class="tag"><input type="checkbox" value="Other" class="sectorFocus"> Other</span>
+            </div>
+          </div>
+
+          <div class="row" style="margin-top:8px">
+            <div style="flex:1;">
+              <label for="riskAppetite">Risk Appetite</label>
+              <select id="riskAppetite" required>
+                <option value="Low">Low</option>
+                <option value="Medium" selected>Medium</option>
+                <option value="High">High</option>
+              </select>
+            </div>
+            <div style="width:8px"></div>
+            <div style="flex:1;">
+              <label for="impactFocus">Impact Focus</label>
+              <select id="impactFocus" required>
+                <option value="ESG">ESG</option>
+                <option value="CO2">CO2 Reduction</option>
+                <option value="Both" selected>Both</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="margin-top:8px;">
+            <label for="investorDescription">Description / Preferences</label>
+            <textarea id="investorDescription" placeholder="Describe the kind of startups you want to invest in." ></textarea>
+          </div>
+
+          <div style="margin-top:12px; display:flex; gap:8px;">
+            <button type="submit">Submit Investor</button>
+            <button type="button" class="secondary" onclick="clearInvestorForm()">Clear</button>
+          </div>
+        </form>
+
+        <div id="investorStatus" class="muted" style="margin-top:6px;"></div>
+      </section>
+    </section>
+
+    <!-- Dashboard / Matches -->
+    <section class="section card" aria-labelledby="dashboard-title">
+      <h2 id="dashboard-title" style="margin:6px 0 6px;">Dashboard & Matches</h2>
+      <div class="grid" style="grid-template-columns:1fr 1fr;">
+        <div>
+          <h3 class="section-title" style="margin:6px 0;">Startup Submissions</h3>
+          <ul id="startupList" class="list"></ul>
+        </div>
+        <div>
+          <h3 class="section-title" style="margin:6px 0;">Investor Submissions</h3>
+          <ul id="investorList" class="list"></ul>
+        </div>
+      </div>
+
+      <div style="margin-top:14px;">
+        <h3 class="section-title" style="margin:6px 0;">Matches</h3>
+        <ul id="matchList" class="list"></ul>
+      </div>
+    </section>
+  </main>
+
+  <footer style="text-align:center; color:#888; padding:20px 0;">
+    MVP demo. For production, build a backend, authentication, and secure persistence.
+  </footer>
+
+  <script>
+    // Data stores (in-memory; uses localStorage for persistence)
+    const startups = [];
+    const investors = [];
+    const STORAGE_KEY = "foundathon3_local";
+
+    function saveAll() {
+      const data = { startups, investors };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    function loadAll() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      try {
+        const data = JSON.parse(raw);
+        if (Array.isArray(data.startups)) data.startups.forEach(s => addStartupToStore(s, false));
+        if (Array.isArray(data.investors)) data.investors.forEach(i => addInvestorToStore(i, false));
+        renderAll();
+      } catch (e) { console.warn("Failed to load storage", e); }
+    }
+
+    function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
+
+    // Scoring helpers
+    function scoreStartup(s) {
+      // Normalize numeric fields
+      const revenue = Number(s.revenue) || 0;
+      const burn = Number(s.burnRate) || 0;
+      const growth = Number(s.growthRate) || 0;
+      const esg = Number(s.esgScore) || 0;
+      const co2 = Number(s.co2Reduction) || 0;
+
+      // Simple risk model
+      // Start with base risk 6, reduce if good metrics, increase if poor
+      let risk = 6;
+      if (growth > 25) risk -= 2;
+      if (growth > 40) risk -= 3;
+      if (revenue > 0) risk -= clamp(revenue / 500000, 0, 3); // more revenue, less risk
+      if (burn > revenue * 0.8) risk += 2;
+      risk = clamp(risk, 1, 10);
+
+      // Simple impact model
+      let impact = 0;
+      // ESG and CO2 both contribute
+      impact += esg / 10;      // 0-10
+      impact += co2 / 10;      // 0-10 if CO2 high
+      impact = clamp(impact, 0, 10);
+
+      return { risk, impact };
+    }
+
+    function matchScore(startup, inv) {
+      // Score based on risk appetite and impact focus
+      const { risk, impact } = startup;
+      let score = 0;
+
+      // Risk match
+      if (inv.riskAppetite === "Low" && risk <= 4) score += 4;
+      else if (inv.riskAppetite === "Medium" && risk <= 6) score += 2;
+      else if (inv.riskAppetite === "High") score += 1;
+
+      // Impact focus
+      const focus = inv.impactFocus;
+      if (focus === "CO2" && startup.co2Reduction > 0) score += 3;
+      if (focus === "ESG" && startup.esgScore > 60) score += 2;
+      if (focus === "Both" && (startup.co2Reduction > 0 || startup.esgScore > 60)) score += 3;
+
+      // Basic size alignment with min investment
+      if (Number(inv.minInvestment) > 0 && Number(inv.minInvestment) <= (startup.revenue + startup.co2Reduction)) {
+        score += 1;
+      }
+
+      return score;
+    }
+
+    // Helpers to render lists
+    function renderStartupItem(s, idx){
+      const li = document.createElement("li");
+      li.className = "list-item";
+      li.innerHTML = `
+        <strong>${s.name}</strong> <span class="muted" style="font-size:12px">(${s.sector})</span><br/>
+        Revenue: $${Number(s.revenue).toLocaleString()} • Burn: $${Number(s.burnRate).toLocaleString()} • Growth: ${Number(s.growthRate)}%<br/>
+        ESG: ${Number(s.esgScore)} • CO2: ${Number(s.co2Reduction)} t/year<br/>
+        <span class="tag">Risk ${s.risk}</span><span class="tag">Impact ${s.impact}</span>
+        <em class="muted" style="display:block;margin-top:6px">${s.description || ""}</em>
+      `;
+      return li;
+    }
+
+    function renderInvestorItem(i, idx){
+      const li = document.createElement("li");
+      li.className = "list-item";
+      const sectors = (i.sectors || []).join(", ") || "Any";
+      li.innerHTML = `
+        <strong>${i.name}</strong> <span class="muted" style="font-size:12px">(min ${Number(i.minInvestment).toLocaleString()})</span><br/>
+        Focus: ${i.impactFocus} • Appetite: ${i.riskAppetite} • Sectors: ${sectors}<br/>
+        <em class="muted" style="display:block;margin-top:6px">${i.description || ""}</em>
+      `;
+      return li;
+    }
+
+    function renderAll(){
+      // Startups
+      const sList = document.getElementById("startupList");
+      sList.innerHTML = "";
+      startups.forEach((s, idx) => {
+        const li = renderStartupItem(s, idx);
+        sList.appendChild(li);
+      });
+
+      // Investors
+      const iList = document.getElementById("investorList");
+      iList.innerHTML = "";
+      investors.forEach((i, idx) => {
+        const li = renderInvestorItem(i, idx);
+        iList.appendChild(li);
+      });
+
+      // Matches
+      renderMatches();
+      document.getElementById("startupStatus").textContent = "";
+      document.getElementById("investorStatus").textContent = "";
+    }
+
+    function renderMatches(){
+      const mList = document.getElementById("matchList");
+      mList.innerHTML = "";
+      if (startups.length === 0 || investors.length === 0) {
+        mList.innerHTML = "<li class='muted'>Add startups and investors to see matches here.</li>";
+        return;
+      }
+      startups.forEach((s) => {
+        // ensure scores exist
+        const sScores = scoreStartup(s);
+        s.risk = sScores.risk;
+        s.impact = sScores.impact;
+
+        // find best investor matches
+        const scored = investors.map(inv => {
+          const score = matchScore(s, inv);
+          return { inv, score };
+        }).filter(x => x.score > 0).sort((a,b)=> b.score - a.score);
+
+        const top = scored.slice(0, 3);
+        if (top.length > 0) {
+          const li = document.createElement("li");
+          li.className = "list-item";
+          const invNames = top.map(t => t.inv.name).join(", ");
+          li.innerHTML = `<strong>${s.name}</strong> – Matches: ${invNames} <span class="muted" style="font-size:12px"> (score: ${top[0].score})</span>`;
+          mList.appendChild(li);
+        } else {
+          const li = document.createElement("li");
+          li.className = "list-item";
+          li.innerHTML = `<strong>${s.name}</strong> – No strong matches yet.`;
+          mList.appendChild(li);
+        }
+      });
+    }
+
+    // Clear forms
+    function clearStartupForm(){ document.getElementById("startupForm").reset(); }
+    function clearInvestorForm(){ document.getElementById("investorForm").reset(); }
+
+    // Helpers to push items to stores
+    function addStartupToStore(obj, save=true){
+      // compute scores
+      const scores = scoreStartup(obj);
+      obj.risk = scores.risk;
+      obj.impact = scores.impact;
+      startups.push(obj);
+      if (save) saveAll();
+    }
+
+    function addInvestorToStore(obj, save=true){
+      investors.push(obj);
+      if (save) saveAll();
+    }
+
+    // Form handlers
+    document.getElementById("startupForm").addEventListener("submit", function(e){
+      e.preventDefault();
+      const s = {
+        name: document.getElementById("startupName").value.trim(),
+        sector: document.getElementById("sector").value,
+        revenue: Number(document.getElementById("revenue").value || 0),
+        burnRate: Number(document.getElementById("burnRate").value || 0),
+        teamSize: Number(document.getElementById("teamSize").value || 1),
+        growthRate: Number(document.getElementById("growthRate").value || 0),
+        esgScore: Number(document.getElementById("esgScore").value || 0),
+        co2Reduction: Number(document.getElementById("co2Reduction").value || 0),
+        description: document.getElementById("description").value.trim()
+      };
+
+      if (!s.name) {
+        alert("Please enter a startup name.");
+        return;
+      }
+      addStartupToStore(s);
+      renderAll();
+      document.getElementById("startupStatus").textContent = "Startup submitted. Scores computed. You can add more.";
+      document.getElementById("startupForm").reset();
+      // re-render to reflect scores
+      renderAll();
+    });
+
+    document.getElementById("investorForm").addEventListener("submit", function(e){
+      e.preventDefault();
+      const sectors = Array.from(document.querySelectorAll(".sectorFocus:checked")).map(n => n.value);
+      const i = {
+        name: document.getElementById("investorName").value.trim(),
+        minInvestment: Number(document.getElementById("minInvestment").value || 0),
+        sectors: sectors,
+        riskAppetite: document.getElementById("riskAppetite").value,
+        impactFocus: document.getElementById("impactFocus").value,
+        description: document.getElementById("investorDescription").value.trim()
+      };
+
+      if (!i.name) {
+        alert("Please enter an investor name.");
+        return;
+      }
+      addInvestorToStore(i);
+      renderAll();
+      document.getElementById("investorStatus").textContent = "Investor submitted. Matches will be updated.";
+      document.getElementById("investorForm").reset();
+    });
+
+    // On load
+    window.addEventListener("load", () => {
+      loadAll();
+      renderAll();
+      // Example demos (optional)
+      // If you want initial data for demonstration, uncomment below:
+      // addStartupToStore({name:"Demo Startup", sector:"Climate Tech", revenue: 120000, burnRate: 60000, teamSize:5, growthRate:30, esgScore:78, co2Reduction: 250, description:"Demo data."}, false);
+      // addInvestorToStore({name:"Demo Investor", minInvestment: 100000, sectors:["Climate Tech","Energy"], riskAppetite:"Medium", impactFocus:"Both", description:"Seed investor."}, false);
+    });
+
+    // Expose reset for debugging (optional)
+    window.clearAllData = function(){
+      startups.length = 0; investors.length = 0;
+      localStorage.removeItem(STORAGE_KEY);
+      renderAll();
+    }
+  </script>
+</body>
+</html>
