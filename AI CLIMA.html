@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClimaMatch AI — Investor Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #1A1A1D;
+    --surface:   #222226;
+    --steel:     #4E4E50;
+    --steel-dim: #35353a;
+    --steel-lt:  #6a6a6e;
+    --burgundy:  #6F2232;
+    --crimson:   #950740;
+    --crimson-b: #b8094f;
+    --text:      #f0ecec;
+    --text-dim:  #9a9098;
+    --muted:     #5c5658;
+    --border:    rgba(149,7,64,0.22);
+    --border-s:  rgba(78,78,80,0.35);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: 'Barlow', sans-serif; font-size: 15px; line-height: 1.7; min-height: 100vh; overflow-x: hidden; }
+  body::before { content:''; position:fixed; top:0; left:0; right:0; height:4px; background:linear-gradient(90deg,var(--burgundy),var(--crimson),var(--crimson-b)); z-index:200; }
+
+  /* NAV */
+  .main-nav { position:fixed; top:4px; left:0; right:0; z-index:100; display:flex; align-items:center; justify-content:space-between; padding:0 2.5rem; height:58px; background:rgba(26,26,29,0.97); backdrop-filter:blur(16px); border-bottom:1px solid var(--border-s); }
+  .brand { font-family:'Barlow Condensed',sans-serif; font-size:1.45rem; font-weight:800; text-decoration:none; color:var(--text); letter-spacing:0.02em; }
+  .brand span { color:var(--crimson); }
+  .nav-links { display:flex; align-items:center; gap:2rem; list-style:none; }
+  .nav-links a { font-family:'Barlow Condensed',sans-serif; font-size:0.8rem; font-weight:600; color:var(--steel-lt); text-decoration:none; text-transform:uppercase; letter-spacing:0.1em; transition:color 0.2s; cursor:pointer; }
+  .nav-links a:hover { color:var(--text); }
+  .nav-cta { background:var(--crimson); color:var(--text); font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:0.8rem; padding:9px 20px; border:none; cursor:pointer; text-transform:uppercase; letter-spacing:0.1em; text-decoration:none; display:inline-block; transition:background 0.2s; }
+  .nav-cta:hover { background:var(--crimson-b); }
+
+  /* PAGE SHELL */
+  .page-shell { padding-top:62px; min-height:100vh; }
+  .page-header { padding:2.5rem 2.5rem 1.8rem; border-bottom:1px solid var(--border-s); background:linear-gradient(180deg,rgba(149,7,64,0.05) 0%,transparent 100%); }
+  .page-header-inner { max-width:1200px; margin:0 auto; }
+  .page-label { font-family:'Courier Prime',monospace; font-size:0.66rem; color:var(--crimson); text-transform:uppercase; letter-spacing:0.2em; margin-bottom:0.5rem; display:flex; align-items:center; gap:8px; }
+  .page-label::before { content:'//'; color:var(--steel); }
+  .page-header h1 { font-family:'Barlow Condensed',sans-serif; font-size:clamp(1.8rem,4vw,3rem); font-weight:800; text-transform:uppercase; line-height:1; color:var(--text); margin-bottom:0.5rem; }
+  .page-header p { color:var(--text-dim); font-size:0.95rem; max-width:680px; }
+
+  /* MAIN TABS */
+  .dash-switcher { display:flex; padding:0 2.5rem; border-bottom:1px solid var(--border-s); overflow-x:auto; }
+  .dash-tab { font-family:'Barlow Condensed',sans-serif; font-size:0.82rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; padding:15px 26px; cursor:pointer; border:none; background:transparent; color:var(--steel-lt); border-bottom:3px solid transparent; margin-bottom:-1px; transition:all 0.2s; white-space:nowrap; }
+  .dash-tab:hover { color:var(--text); }
+  .dash-tab.active { color:var(--crimson); border-bottom-color:var(--crimson); background:rgba(149,7,64,0.04); }
+  .dash-panel { display:none; }
+  .dash-panel.active { display:block; }
+
+  /* ═══ PANEL: FAQ ═══ */
+  .faq-tab-bar { display:flex; padding:0 2.5rem; border-bottom:1px solid var(--border-s); overflow-x:auto; }
+  .faq-tab { font-family:'Barlow Condensed',sans-serif; font-size:0.76rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; padding:13px 20px; cursor:pointer; border:none; background:transparent; color:var(--steel-lt); border-bottom:2px solid transparent; margin-bottom:-1px; transition:all 0.18s; white-space:nowrap; }
+  .faq-tab:hover { color:var(--text); }
+  .faq-tab.active { color:var(--crimson); border-bottom-color:var(--crimson); }
+  .faq-section { display:none; }
+  .faq-section.active { display:block; }
+  .faq-content { max-width:1100px; margin:0 auto; padding:2.5rem 2.5rem; }
+  .faq-item { padding:1.8rem 0; border-bottom:1px solid var(--border-s); }
+  .faq-item:last-child { border-bottom:none; }
+  .faq-q { font-family:'Barlow Condensed',sans-serif; font-size:1.1rem; font-weight:800; text-transform:uppercase; color:var(--text); margin-bottom:0.7rem; line-height:1.2; }
+  .faq-a { color:var(--text-dim); font-size:0.93rem; line-height:1.8; }
+  .faq-a strong { color:var(--text); }
+  .info-box { background:rgba(149,7,64,0.06); border-left:3px solid var(--crimson); padding:0.9rem 1.1rem; margin-top:0.9rem; font-size:0.86rem; color:var(--text-dim); line-height:1.7; }
+  .info-box strong { color:var(--crimson); }
+  .score-bars { margin-top:1.1rem; display:flex; flex-direction:column; gap:0.65rem; }
+  .score-bar-row { display:flex; align-items:center; gap:1rem; }
+  .score-bar-label { font-family:'Barlow Condensed',sans-serif; font-size:0.76rem; font-weight:700; text-transform:uppercase; color:var(--text-dim); min-width:110px; }
+  .score-bar-track { flex:1; height:5px; background:rgba(78,78,80,0.3); }
+  .score-bar-fill { height:100%; transition:width 1.2s cubic-bezier(0.22,1,0.36,1); background:linear-gradient(90deg,var(--burgundy),var(--crimson)); }
+  .score-bar-val { font-family:'Courier Prime',monospace; font-size:0.7rem; color:var(--crimson); min-width:34px; text-align:right; }
+
+  /* ═══ PANEL: OUTLOOK ═══ */
+  .outlook-layout { max-width:1200px; margin:0 auto; padding:2.5rem; }
+  .stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--border-s); border:1px solid var(--border-s); margin-bottom:2rem; }
+  @media(max-width:700px){.stats-row{grid-template-columns:1fr 1fr;}}
+  .stat-cell { background:var(--surface); padding:1.4rem 1.6rem; position:relative; overflow:hidden; }
+  .stat-cell::after { content:''; position:absolute; bottom:0; left:0; right:0; height:2px; background:linear-gradient(90deg,var(--burgundy),var(--crimson)); transform:scaleX(0); transform-origin:left; transition:transform 0.4s; }
+  .stat-cell:hover::after { transform:scaleX(1); }
+  .stat-val { font-family:'Barlow Condensed',sans-serif; font-size:2.2rem; font-weight:800; background:linear-gradient(135deg,var(--crimson),var(--burgundy)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; line-height:1; margin-bottom:4px; }
+  .stat-lbl { font-family:'Courier Prime',monospace; font-size:0.6rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--text-dim); }
+  .stat-sub { font-size:0.76rem; color:var(--steel-lt); margin-top:3px; }
+  .timeline-strip { background:var(--surface); border:1px solid var(--border-s); padding:1.8rem 2rem; margin-bottom:2rem; }
+  .timeline-strip h3 { font-family:'Barlow Condensed',sans-serif; font-size:0.95rem; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; color:var(--text); margin-bottom:1.6rem; }
+  .timeline-months { display:grid; grid-template-columns:repeat(6,1fr); gap:0; position:relative; }
+  .timeline-months::before { content:''; position:absolute; top:7px; left:7px; right:7px; height:2px; background:var(--border-s); }
+  .timeline-month { text-align:center; position:relative; }
+  .tm-dot { width:16px; height:16px; border-radius:50%; margin:0 auto 8px; position:relative; z-index:1; transition:transform 0.2s; }
+  .tm-dot.done { background:var(--crimson); box-shadow:0 0 8px rgba(149,7,64,0.5); }
+  .tm-dot.current { background:var(--crimson-b); box-shadow:0 0 12px rgba(184,9,79,0.6); animation:blink 2s infinite; border:2px solid var(--text); }
+  .tm-dot.future { background:var(--steel-dim); border:2px solid var(--steel); }
+  .tm-label { font-family:'Barlow Condensed',sans-serif; font-size:0.68rem; font-weight:700; text-transform:uppercase; color:var(--text-dim); }
+  .tm-event { font-family:'Courier Prime',monospace; font-size:0.58rem; color:var(--steel-lt); margin-top:4px; line-height:1.4; }
+  .timeline-month:hover .tm-dot { transform:scale(1.3); }
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:0.5}}
+  .outlook-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.4rem; margin-bottom:2rem; }
+  @media(max-width:900px){.outlook-grid{grid-template-columns:1fr;}}
+  .oc { background:var(--surface); border:1px solid var(--border-s); padding:1.6rem; position:relative; overflow:hidden; transition:border-color 0.25s,box-shadow 0.25s; }
+  .oc:hover { border-color:var(--border); box-shadow:0 6px 28px rgba(149,7,64,0.1); }
+  .oc::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--burgundy),var(--crimson)); }
+  .oc-meta { display:flex; justify-content:space-between; align-items:center; margin-bottom:0.9rem; }
+  .oc-tag { font-family:'Courier Prime',monospace; font-size:0.6rem; text-transform:uppercase; letter-spacing:0.14em; color:var(--crimson); background:rgba(149,7,64,0.1); padding:3px 10px; border:1px solid var(--border); }
+  .oc-tl { font-family:'Courier Prime',monospace; font-size:0.6rem; color:var(--steel-lt); }
+  .oc-title { font-family:'Barlow Condensed',sans-serif; font-size:1.1rem; font-weight:800; text-transform:uppercase; color:var(--text); margin-bottom:0.5rem; line-height:1.2; }
+  .oc-body { font-size:0.86rem; color:var(--text-dim); line-height:1.75; }
+  .oc-status { display:inline-flex; align-items:center; gap:6px; margin-top:0.9rem; font-family:'Courier Prime',monospace; font-size:0.63rem; text-transform:uppercase; letter-spacing:0.1em; }
+  .s-dot { width:7px; height:7px; border-radius:50%; }
+  .s-dot.active { background:#22c55e; box-shadow:0 0 6px rgba(34,197,94,0.5); }
+  .s-dot.dev { background:var(--crimson); animation:blink 2s infinite; }
+  .s-dot.plan { background:var(--steel); }
+  .section-hdr { margin-bottom:1.4rem; padding-bottom:0.9rem; border-bottom:1px solid var(--border-s); }
+  .section-hdr h2 { font-family:'Barlow Condensed',sans-serif; font-size:1.2rem; font-weight:800; text-transform:uppercase; color:var(--text); }
+  .section-hdr p { font-size:0.86rem; color:var(--text-dim); margin-top:3px; }
+  .update-list { display:flex; flex-direction:column; gap:1px; }
+  .update-item { background:var(--surface); border:1px solid var(--border-s); padding:1.4rem 1.8rem; display:grid; grid-template-columns:110px 1fr auto; gap:1.4rem; align-items:start; transition:border-color 0.2s,background 0.2s; }
+  .update-item:hover { border-color:var(--border); background:rgba(149,7,64,0.02); }
+  .u-date { font-family:'Courier Prime',monospace; font-size:0.7rem; color:var(--steel-lt); line-height:1.5; }
+  .u-date strong { display:block; color:var(--text); font-size:0.88rem; }
+  .u-title { font-family:'Barlow Condensed',sans-serif; font-size:1rem; font-weight:800; text-transform:uppercase; color:var(--text); margin-bottom:0.35rem; }
+  .u-body { font-size:0.85rem; color:var(--text-dim); line-height:1.7; }
+  .u-badge { font-family:'Courier Prime',monospace; font-size:0.58rem; text-transform:uppercase; letter-spacing:0.12em; padding:4px 10px; border:1px solid; white-space:nowrap; align-self:flex-start; }
+  .u-badge.g { color:#22c55e; border-color:rgba(34,197,94,0.3); background:rgba(34,197,94,0.06); }
+  .u-badge.r { color:var(--crimson); border-color:var(--border); background:rgba(149,7,64,0.06); }
+  .u-badge.gr { color:var(--steel-lt); border-color:var(--border-s); background:rgba(78,78,80,0.08); }
+
+  /* ═══ PANEL: DATABASE ═══ */
+  .db-layout { max-width:1200px; margin:0 auto; padding:2.5rem; }
+  .db-topbar { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; margin-bottom:1.8rem; }
+  .db-search { background:rgba(78,78,80,0.15); border:1px solid var(--border-s); color:var(--text); font-family:'Barlow',sans-serif; font-size:0.88rem; padding:10px 16px; width:280px; outline:none; transition:border-color 0.2s; }
+  .db-search:focus { border-color:var(--crimson); }
+  .db-search::placeholder { color:var(--muted); }
+  .db-filter-row { display:flex; gap:0.5rem; flex-wrap:wrap; }
+  .db-filter { font-family:'Courier Prime',monospace; font-size:0.62rem; text-transform:uppercase; letter-spacing:0.1em; padding:6px 14px; border:1px solid var(--border-s); background:transparent; color:var(--steel-lt); cursor:pointer; transition:all 0.2s; }
+  .db-filter:hover,.db-filter.active { border-color:var(--crimson); color:var(--crimson); background:rgba(149,7,64,0.08); }
+  .db-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:1.2rem; }
+  .db-card { background:var(--surface); border:1px solid var(--border-s); padding:1.5rem; position:relative; overflow:hidden; transition:all 0.25s; cursor:default; }
+  .db-card:hover { border-color:var(--border); box-shadow:0 6px 28px rgba(149,7,64,0.1); transform:translateY(-2px); }
+  .db-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--burgundy),var(--crimson)); transform:scaleX(0); transform-origin:left; transition:transform 0.35s; }
+  .db-card:hover::before { transform:scaleX(1); }
+  .db-card-head { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.7rem; }
+  .db-name { font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:1.1rem; color:var(--text); }
+  .db-stage { font-family:'Courier Prime',monospace; font-size:0.58rem; color:var(--text); background:var(--burgundy); padding:3px 9px; white-space:nowrap; }
+  .db-sector { font-family:'Courier Prime',monospace; font-size:0.62rem; color:var(--crimson); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:0.55rem; }
+  .db-desc { font-size:0.82rem; color:var(--text-dim); line-height:1.6; margin-bottom:0.9rem; }
+  .db-scores { display:flex; gap:0.6rem; flex-wrap:wrap; margin-bottom:0.9rem; }
+  .db-score-tag { font-family:'Courier Prime',monospace; font-size:0.6rem; padding:3px 9px; border:1px solid var(--border-s); color:var(--text-dim); }
+  .db-score-tag.hi { border-color:var(--border); color:var(--crimson); background:rgba(149,7,64,0.08); }
+  .db-btns { display:flex; gap:6px; }
+  .db-btn { flex:1; padding:9px; font-family:'Barlow Condensed',sans-serif; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; border:none; cursor:pointer; transition:background 0.2s; }
+  .db-btn.primary { background:var(--burgundy); color:var(--text); }
+  .db-btn.primary:hover { background:var(--crimson); }
+  .db-btn.secondary { background:rgba(78,78,80,0.3); color:var(--text-dim); border:1px solid var(--border-s); }
+  .db-btn.secondary:hover { background:rgba(78,78,80,0.5); color:var(--text); }
+
+  /* ═══ PANEL: ANALYZE / INPUT FORM ═══ */
+  .form-layout { max-width:960px; margin:0 auto; padding:2.5rem; }
+  .sample-banner { background:linear-gradient(135deg,var(--burgundy),var(--steel-dim)); border:1px solid var(--border); padding:1.4rem 1.8rem; margin-bottom:2rem; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; }
+  .sb-text h4 { font-family:'Barlow Condensed',sans-serif; font-size:1rem; font-weight:800; text-transform:uppercase; color:var(--text); margin-bottom:3px; }
+  .sb-text p { font-family:'Courier Prime',monospace; font-size:0.66rem; color:rgba(240,236,236,0.55); letter-spacing:0.06em; }
+  .sb-btn { background:var(--crimson); color:var(--text); font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:0.82rem; text-transform:uppercase; letter-spacing:0.08em; padding:10px 22px; border:none; cursor:pointer; transition:background 0.2s; clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%); }
+  .sb-btn:hover { background:var(--crimson-b); }
+  .preload-bar { display:none; align-items:center; gap:10px; background:rgba(149,7,64,0.08); border:1px solid var(--border); padding:0.8rem 1.1rem; margin-bottom:1.4rem; font-family:'Courier Prime',monospace; font-size:0.7rem; color:var(--crimson); letter-spacing:0.06em; }
+  .preload-bar span { flex:1; }
+  .preload-bar button { background:none; border:none; color:var(--crimson); cursor:pointer; font-size:1rem; }
+  .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.3rem; }
+  @media(max-width:680px){.form-grid{grid-template-columns:1fr;}}
+  .fg { display:flex; flex-direction:column; gap:6px; }
+  .fg.full { grid-column:1/-1; }
+  .fg label { font-family:'Courier Prime',monospace; font-size:0.62rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.12em; }
+  .fg label .req { color:var(--crimson); }
+  .fg input,.fg select,.fg textarea { background:rgba(149,7,64,0.04); border:1px solid rgba(78,78,80,0.4); color:var(--text); font-family:'Barlow',sans-serif; font-size:0.92rem; padding:11px 14px; outline:none; transition:border-color 0.2s,box-shadow 0.2s; width:100%; }
+  .fg input:focus,.fg select:focus,.fg textarea:focus { border-color:rgba(149,7,64,0.55); box-shadow:0 0 0 3px rgba(149,7,64,0.08); }
+  .fg input::placeholder,.fg textarea::placeholder { color:var(--muted); }
+  .fg select option { background:#1A1A1D; color:var(--text); }
+  .fg textarea { resize:vertical; min-height:84px; }
+  .range-row { display:flex; align-items:center; gap:10px; }
+  .range-row input[type=range] { flex:1; padding:0; border:none; background:transparent; accent-color:var(--crimson); cursor:pointer; box-shadow:none; }
+  .rv { font-family:'Courier Prime',monospace; font-weight:700; color:var(--crimson); font-size:1rem; min-width:44px; text-align:right; }
+  .fdiv { grid-column:1/-1; border:none; border-top:1px solid rgba(78,78,80,0.22); margin:0.3rem 0; position:relative; }
+  .fdiv::before { content:attr(data-label); position:absolute; top:-10px; left:0; font-family:'Courier Prime',monospace; font-size:0.6rem; color:var(--crimson); text-transform:uppercase; letter-spacing:0.14em; background:var(--bg); padding-right:10px; }
+  .err-msg { color:var(--crimson-b); font-size:0.68rem; font-family:'Courier Prime',monospace; margin-top:2px; display:none; }
+  input.err,select.err,textarea.err { border-color:var(--crimson)!important; }
+  .submit-btn { width:100%; margin-top:2rem; background:linear-gradient(135deg,var(--crimson),var(--burgundy)); color:var(--text); font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:1.05rem; text-transform:uppercase; letter-spacing:0.06em; padding:17px; border:none; cursor:pointer; clip-path:polygon(12px 0%,100% 0%,calc(100% - 12px) 100%,0% 100%); transition:all 0.25s; }
+  .submit-btn:hover:not(:disabled) { background:linear-gradient(135deg,var(--crimson-b),var(--crimson)); transform:translateY(-2px); box-shadow:0 10px 36px rgba(149,7,64,0.3); }
+  .submit-btn:disabled { opacity:0.45; cursor:not-allowed; }
+
+  /* Loading */
+  .loading-overlay { display:none; position:fixed; inset:0; z-index:300; background:rgba(26,26,29,0.97); backdrop-filter:blur(14px); flex-direction:column; align-items:center; justify-content:center; gap:1.6rem; }
+  .loading-overlay.active { display:flex; }
+  .loader-ring { width:60px; height:60px; border-radius:50%; border:3px solid rgba(149,7,64,0.12); border-top-color:var(--crimson); border-right-color:var(--burgundy); animation:spin 0.85s linear infinite; }
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .loader-text { font-family:'Courier Prime',monospace; font-size:0.78rem; color:var(--text-dim); text-align:center; line-height:2; }
+  .loader-step { color:var(--crimson); font-weight:700; }
+
+  /* Results */
+  #results-panel { display:none; max-width:960px; margin:0 auto; padding:0 2.5rem 4rem; }
+  .res-header { text-align:center; padding:3rem 0 2rem; border-top:1px solid var(--border-s); }
+  .res-header h2 { font-family:'Barlow Condensed',sans-serif; font-size:2.4rem; font-weight:800; text-transform:uppercase; color:var(--text); }
+  .res-header p { font-family:'Courier Prime',monospace; font-size:0.7rem; color:var(--steel-lt); margin-top:0.5rem; letter-spacing:0.06em; }
+  .res-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.3rem; margin-top:1.8rem; }
+  @media(max-width:680px){.res-grid{grid-template-columns:1fr;}}
+  .score-card { border:1px solid var(--border-s); background:var(--surface); padding:1.8rem; position:relative; overflow:hidden; transition:border-color 0.3s,box-shadow 0.3s; }
+  .score-card:hover { border-color:var(--border); box-shadow:0 6px 28px rgba(149,7,64,0.1); }
+  .score-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; }
+  .score-card.risk::before { background:linear-gradient(90deg,var(--steel),var(--burgundy)); }
+  .score-card.impact::before { background:linear-gradient(90deg,var(--burgundy),var(--crimson)); }
+  .score-card.esg::before { background:linear-gradient(90deg,var(--steel-dim),var(--burgundy)); }
+  .score-card.match::before { background:linear-gradient(90deg,var(--crimson),var(--crimson-b)); }
+  .sc-lbl { font-family:'Courier Prime',monospace; font-size:0.62rem; color:var(--steel-lt); text-transform:uppercase; letter-spacing:0.14em; margin-bottom:0.9rem; }
+  .sc-big { font-family:'Barlow Condensed',sans-serif; font-size:4rem; font-weight:800; line-height:1; }
+  .sc-big.g { color:var(--crimson); }
+  .sc-big.a { color:var(--burgundy); }
+  .sc-big.r { color:var(--crimson-b); }
+  .sc-big.b { color:var(--text); }
+  .sc-big.p { color:var(--crimson); }
+  .sc-sub { font-size:0.85rem; color:var(--text-dim); margin-top:0.5rem; }
+  .sc-bar-track { height:4px; background:rgba(78,78,80,0.25); overflow:hidden; margin-top:1.2rem; }
+  .sc-bar-fill { height:100%; width:0%; transition:width 1.5s cubic-bezier(0.22,1,0.36,1); }
+  .sc-bar-fill.g { background:linear-gradient(90deg,var(--burgundy),var(--crimson)); }
+  .sc-bar-fill.a { background:linear-gradient(90deg,var(--steel),var(--burgundy)); }
+  .sc-bar-fill.r { background:linear-gradient(90deg,var(--crimson),var(--crimson-b)); }
+  .sc-bar-fill.p { background:linear-gradient(90deg,var(--steel-dim),var(--crimson)); }
+  .sc-bar-fill.b { background:linear-gradient(90deg,var(--burgundy),var(--crimson)); }
+  .full-col { grid-column:1/-1; }
+  .breakdown-box,.analysis-box,.investors-box { border:1px solid var(--border-s); background:var(--surface); padding:1.8rem; }
+  .analysis-box { border-color:var(--border); background:linear-gradient(135deg,rgba(149,7,64,0.07) 0%,rgba(111,34,50,0.05) 100%); position:relative; }
+  .analysis-box::after { content:''; position:absolute; top:0; left:0; bottom:0; width:3px; background:linear-gradient(180deg,var(--crimson),var(--burgundy)); }
+  .box-title { font-family:'Barlow Condensed',sans-serif; font-size:1.1rem; font-weight:800; text-transform:uppercase; color:var(--text); margin-bottom:1rem; }
+  .analysis-box .box-title { color:var(--crimson); }
+  .br-row { display:flex; justify-content:space-between; align-items:center; padding:0.55rem 0; border-bottom:1px solid rgba(78,78,80,0.15); }
+  .br-row:last-child { border-bottom:none; }
+  .br-key { font-size:0.82rem; color:var(--text-dim); }
+  .br-val { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:0.95rem; color:var(--text); }
+  .analysis-box p { font-size:0.9rem; color:var(--text-dim); line-height:1.85; }
+  .inv-card { display:flex; justify-content:space-between; align-items:center; padding:0.85rem 1rem; border:1px solid rgba(78,78,80,0.2); margin-bottom:0.6rem; transition:all 0.22s; background:rgba(149,7,64,0.02); }
+  .inv-card:hover { border-color:var(--border); background:rgba(149,7,64,0.05); transform:translateX(4px); }
+  .inv-card:last-child { margin-bottom:0; }
+  .inv-name { font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:1rem; color:var(--text); }
+  .inv-type { font-family:'Courier Prime',monospace; font-size:0.6rem; color:var(--steel-lt); margin-top:2px; }
+  .inv-score { font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:1.7rem; background:linear-gradient(135deg,var(--crimson),var(--burgundy)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+
+  @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+  .reveal{opacity:0;transform:translateY(14px);transition:opacity 0.5s ease,transform 0.5s ease}
+  .reveal.visible{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loader-ring"></div>
+  <div class="loader-text">Analyzing your startup…<br><span class="loader-step" id="loaderStep">Initializing AI models</span></div>
+</div>
+
+<!-- NAV -->
+<nav class="main-nav">
+  <a href="#" class="brand">Clima<span>Match</span> AI</a>
+  <ul class="nav-links">
+    <li><a onclick="switchDash('faq',event)">Investor Guide</a></li>
+    <li><a onclick="switchDash('db',event)">Database</a></li>
+    <li><a onclick="switchDash('analyze',event)">Analyze</a></li>
+    <li><a onclick="switchDash('outlook',event)">Outlook</a></li>
+  </ul>
+  <a class="nav-cta" onclick="switchDash('analyze',event)">Start Analysis →</a>
+</nav>
+
+<div class="page-shell">
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="page-header-inner">
+      <p class="page-label">Investor Intelligence</p>
+      <h1>ClimaMatch <span style="color:var(--crimson)">Investor</span> Hub</h1>
+      <p>Scores, explanations, live startup database, analysis tool, and platform outlook — all in one place.</p>
+    </div>
+  </div>
+
+  <!-- MAIN TAB BAR -->
+  <div class="dash-switcher">
+    <button class="dash-tab active"  onclick="switchDash('faq',event)">📚 Investor Guide</button>
+    <button class="dash-tab"         onclick="switchDash('db',event)">🗄 Startup Database</button>
+    <button class="dash-tab"         onclick="switchDash('analyze',event)">⚡ Analyze a Startup</button>
+    <button class="dash-tab"         onclick="switchDash('outlook',event)">📅 Platform Outlook</button>
+  </div>
+
+  <!-- ══════════════════════════════════
+       PANEL 1 — INVESTOR FAQ
+  ══════════════════════════════════ -->
+  <div class="dash-panel active" id="panel-faq">
+    <div class="faq-tab-bar">
+      <button class="faq-tab active" onclick="switchFaq('score',this)">How the Score Works</button>
+      <button class="faq-tab" onclick="switchFaq('matching',this)">How Matching Works</button>
+      <button class="faq-tab" onclick="switchFaq('money',this)">Protecting Your Capital</button>
+      <button class="faq-tab" onclick="switchFaq('monitoring',this)">Monitoring & Reporting</button>
+    </div>
+
+    <!-- HOW THE SCORE WORKS -->
+    <div class="faq-section active" id="faq-score">
+      <div class="faq-content">
+        <div class="faq-item">
+          <div class="faq-q">Can I trust a score generated by an AI?</div>
+          <div class="faq-a">The score is a starting point, not a final verdict — but it is a <strong>very well-informed one</strong>. The AI applies the same evaluation framework every time, without the inconsistency that comes from rotating analysts or subjective impressions. A high score means the fundamentals look strong. A low score means specific concerns have been identified that warrant investigation before you commit.</div>
+          <div class="info-box"><strong>Think of it like this:</strong> A weather forecast doesn't guarantee rain, but a 90% probability still meaningfully guides your decision. A Risk Score of 80+ confirms the financial fundamentals are solid — it doesn't guarantee success, but it significantly changes your starting position.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">What are the four scores and what do they mean?</div>
+          <div class="faq-a">Every analysis produces four scores. Here's what each tells you:</div>
+          <div class="score-bars">
+            <div class="score-bar-row"><span class="score-bar-label">Risk Score</span><div class="score-bar-track"><div class="score-bar-fill" data-w="75%"></div></div><span class="score-bar-val">75</span></div>
+            <div class="score-bar-row"><span class="score-bar-label">Impact Score</span><div class="score-bar-track"><div class="score-bar-fill" data-w="88%"></div></div><span class="score-bar-val">88</span></div>
+            <div class="score-bar-row"><span class="score-bar-label">ESG Grade</span><div class="score-bar-track"><div class="score-bar-fill" data-w="80%"></div></div><span class="score-bar-val">A</span></div>
+            <div class="score-bar-row"><span class="score-bar-label">Investor Match</span><div class="score-bar-track"><div class="score-bar-fill" data-w="82%"></div></div><span class="score-bar-val">82</span></div>
+          </div>
+          <div class="faq-a" style="margin-top:1rem"><strong>Risk Score (0–100):</strong> Financial health — revenue, burn rate, runway, growth, margins, stage. Higher = financially safer.<br><br><strong>Impact Score (0–100):</strong> Climate outcomes — CO₂ reduction, renewable energy, jobs, sector weighting. Higher = greater planet benefit.<br><br><strong>ESG Grade (C to A+):</strong> How responsibly the startup operates — not just what it does, but how. Weighted average of Environmental, Social, and Governance sub-scores.<br><br><strong>Investor Match (0–100):</strong> Composite score — Risk 35% + Impact 45% + ESG 20%. How well this startup fits a climate-focused investment mandate.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">What makes the Impact Score go up or down?</div>
+          <div class="faq-a">The score improves with a <strong>clear, well-documented CO₂ reduction figure</strong>, high sector climate relevance (Carbon Capture scores highest), high renewable energy usage, and strong social/governance scores. Vague projections, zero CO₂ impact, or low renewable adoption will lower it — and the AI report explains exactly why.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">What does the burn/revenue ratio tell me?</div>
+          <div class="faq-a">It compares annual burn (monthly burn × 12) against annual revenue. <strong>Below 0.5 is excellent</strong> — spending far less than earned. Above 2.0 is a red flag — burning capital much faster than generating revenue. This single metric has historically been one of the strongest early predictors of startup survival. Always check it alongside runway.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HOW MATCHING WORKS -->
+    <div class="faq-section" id="faq-matching">
+      <div class="faq-content">
+        <div class="faq-item">
+          <div class="faq-q">How does the investor matching engine work?</div>
+          <div class="faq-a">The engine compares your startup's sector, stage, and scores against the mandates of 8 institutional investors in the database. Each investor has a <strong>minimum Impact threshold</strong> and a <strong>minimum Risk threshold</strong> they require. Your match percentage reflects how closely your profile meets those thresholds — plus a sector alignment bonus worth up to 25 points if your sector is one of their focus areas.</div>
+          <div class="info-box"><strong>Practical tip:</strong> The single biggest lever for improving your match score is improving your Impact Score. It carries 45% of the weight in the overall Investor Match — more than Risk (35%) or ESG (20%) combined.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">What if I'm not getting the matches I want?</div>
+          <div class="faq-a">The report tells you <strong>exactly which threshold you're falling short of</strong> for each investor. For instance, if Net Zero Advisors requires a minimum Impact Score of 65 and yours is 58, you'll see that gap and know precisely what needs to improve. These are not generic tips — they are specific, data-driven recommendations based on what is actually in the investor database.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">What if I'm an investor browsing startups?</div>
+          <div class="faq-a">Browse the <strong>Startup Database tab</strong> and filter by sector or stage. Every startup has been pre-scored so you only see deals that have passed a basic quality filter. For each startup you get the full score breakdown, AI analysis, and a compatibility rating — your due diligence starts from structured intelligence, not raw data. Click "View Report" to see the full saved analysis instantly.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROTECTING YOUR CAPITAL -->
+    <div class="faq-section" id="faq-money">
+      <div class="faq-content">
+        <div class="faq-item">
+          <div class="faq-q">How do I know the scores are objective?</div>
+          <div class="faq-a">The scoring engine is <strong>fully algorithmic and deterministic</strong> — the same inputs always produce the same outputs. There is no human analyst who can be swayed by a compelling founder story, a warm introduction, or a well-designed pitch deck. Two startups with identical fundamentals will always receive identical scores. The AI doesn't know if the founder went to IIT or a regional college — it sees numbers, sector, stage, and description.</div>
+          <div class="info-box"><strong>Why this matters for your capital:</strong> Traditional deal evaluation is subject to unconscious bias, analyst fatigue, and inconsistency across reviewers. ClimaMatch eliminates all of that.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Why does funding stage affect the Risk Score?</div>
+          <div class="faq-a">Stage acts as a <strong>maturity modifier</strong>. A Growth-stage company with the same revenue as a Pre-seed company represents a fundamentally different risk profile — the Growth company has survived multiple rounds of validation, team building, and market stress. The engine adds up to <strong>+18 points for Growth stage</strong> and applies a −5 penalty for Pre-seed, reflecting the statistical reality that earlier stage equals higher failure rate.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">What does runway tell me as an investor?</div>
+          <div class="faq-a">Runway is the months a startup can operate at its current burn rate without additional funding. <strong>More than 24 months is strong. Below 6 months is critical</strong> and will significantly lower the Risk Score. A short runway tells you the startup is fundraising under pressure — which changes negotiation dynamics significantly in your favour, but also signals operational risk.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MONITORING & REPORTING -->
+    <div class="faq-section" id="faq-monitoring">
+      <div class="faq-content">
+        <div class="faq-item">
+          <div class="faq-q">How does ClimaMatch track startup progress over time?</div>
+          <div class="faq-a">Each startup's scores are timestamped at submission. As startups re-submit updated data — after a new funding round, product launch, or annually — the platform maintains a <strong>score history</strong> for each entity in the database. You can see exactly how Risk, Impact, and ESG scores have evolved over time.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">How will I know if something changes?</div>
+          <div class="faq-a">When a startup re-submits data and their scores change materially — a Risk Score dropping below 50 after previously being above 70 is a signal worth investigating. Similarly, an Impact Score jumping from 55 to 82 after a carbon certification is a positive development worth revisiting. <strong>Email alerts for score changes are in development for Q2 2025</strong> (see Platform Outlook tab).</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">How does this help with my LP reporting obligations?</div>
+          <div class="faq-a">Each analysis generates a structured breakdown covering energy sector, CO₂ reduction potential, ESG grade, and financial risk classification. These outputs are structured to align with the <strong>disclosure frameworks that institutional investors, LP reporting, and ESG standards require</strong> — saving your team significant time and ensuring numbers are backed by independently calculated data. PDF export is planned for Q3 2025.</div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /panel-faq -->
+
+
+  <!-- ══════════════════════════════════
+       PANEL 2 — STARTUP DATABASE
+  ══════════════════════════════════ -->
+  <div class="dash-panel" id="panel-db">
+    <div class="db-layout">
+      <div class="db-topbar">
+        <div>
+          <p class="page-label" style="margin-bottom:4px">Startup Database</p>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:1.3rem;font-weight:800;text-transform:uppercase;color:var(--text)">6 Pre-Scored Climate Startups</div>
+        </div>
+        <div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap">
+          <input class="db-search" id="dbSearch" placeholder="Search startups…" oninput="filterDB()">
+          <div class="db-filter-row" id="dbFilters">
+            <button class="db-filter active" data-f="all" onclick="filterByTag(this,'all')">All</button>
+            <button class="db-filter" data-f="Clean Energy" onclick="filterByTag(this,'Clean Energy')">Clean Energy</button>
+            <button class="db-filter" data-f="Water Technology" onclick="filterByTag(this,'Water Technology')">Water</button>
+            <button class="db-filter" data-f="Sustainable Agriculture" onclick="filterByTag(this,'Sustainable Agriculture')">Agriculture</button>
+            <button class="db-filter" data-f="Electric Mobility" onclick="filterByTag(this,'Electric Mobility')">Mobility</button>
+            <button class="db-filter" data-f="Climate FinTech" onclick="filterByTag(this,'Climate FinTech')">FinTech</button>
+          </div>
+        </div>
+      </div>
+      <div class="db-grid" id="dbGrid"></div>
+    </div>
+  </div><!-- /panel-db -->
+
+
+  <!-- ══════════════════════════════════
+       PANEL 3 — ANALYZE / FORM
+  ══════════════════════════════════ -->
+  <div class="dash-panel" id="panel-analyze">
+    <div class="form-layout">
+
+      <!-- Sample banner -->
+      <div class="sample-banner">
+        <div class="sb-text">
+          <h4>📋 Try the Sample Startup</h4>
+          <p>Pre-filled with GreenGrid Technologies — a real-world style Clean Energy startup from Tamil Nadu</p>
+        </div>
+        <button class="sb-btn" onclick="loadSample()">Load Sample Data →</button>
+      </div>
+
+      <!-- Pre-loaded notice -->
+      <div class="preload-bar" id="preloadBar">
+        <span id="preloadMsg">✦ Sample data loaded — edit any field before submitting</span>
+        <button onclick="document.getElementById('preloadBar').style.display='none'">✕</button>
+      </div>
+
+      <!-- Form -->
+      <form id="startupForm" novalidate>
+        <div class="form-grid">
+          <hr class="fdiv" data-label="Company Information">
+          <div class="fg"><label>Startup Name <span class="req">*</span></label><input type="text" id="sName" placeholder="e.g. GreenGrid Technologies" required><span class="err-msg" id="e-sName">Required</span></div>
+          <div class="fg"><label>Founder / CEO <span class="req">*</span></label><input type="text" id="sFounder" placeholder="e.g. Priya Sharma" required><span class="err-msg" id="e-sFounder">Required</span></div>
+          <div class="fg"><label>Industry Sector <span class="req">*</span></label>
+            <select id="sSector" required>
+              <option value="">Select sector…</option>
+              <option>Clean Energy</option><option>Sustainable Agriculture</option><option>Electric Mobility</option>
+              <option>Waste Management</option><option>Water Technology</option><option>Carbon Capture</option>
+              <option>Green Construction</option><option>Climate FinTech</option><option>Other CleanTech</option>
+            </select><span class="err-msg" id="e-sSector">Required</span></div>
+          <div class="fg"><label>Startup Stage <span class="req">*</span></label>
+            <select id="sStage" required>
+              <option value="">Select stage…</option>
+              <option>Idea / Pre-seed</option><option>Seed</option><option>Series A</option><option>Series B</option><option>Growth</option>
+            </select><span class="err-msg" id="e-sStage">Required</span></div>
+          <div class="fg"><label>Country / Region <span class="req">*</span></label><input type="text" id="sCountry" placeholder="e.g. India" required><span class="err-msg" id="e-sCountry">Required</span></div>
+          <div class="fg"><label>Team Size</label><input type="number" id="sTeam" placeholder="e.g. 12" min="1"></div>
+
+          <hr class="fdiv" data-label="Financial Metrics">
+          <div class="fg"><label>Annual Revenue (USD) <span class="req">*</span></label><input type="number" id="sRevenue" placeholder="e.g. 500000" min="0" required><span class="err-msg" id="e-sRevenue">Required</span></div>
+          <div class="fg"><label>Monthly Burn Rate (USD) <span class="req">*</span></label><input type="number" id="sBurn" placeholder="e.g. 40000" min="0" required><span class="err-msg" id="e-sBurn">Required</span></div>
+          <div class="fg"><label>Total Funding Raised (USD)</label><input type="number" id="sFunding" placeholder="e.g. 1200000" min="0"></div>
+          <div class="fg"><label>Runway (months)</label><input type="number" id="sRunway" placeholder="e.g. 18" min="0"></div>
+          <div class="fg"><label>Revenue Growth YoY: <span id="rgV" class="rv">30%</span></label><div class="range-row"><input type="range" id="sGrowth" min="-50" max="500" value="30" oninput="document.getElementById('rgV').textContent=this.value+'%'"></div></div>
+          <div class="fg"><label>Gross Margin: <span id="gmV" class="rv">40%</span></label><div class="range-row"><input type="range" id="sMargin" min="-100" max="100" value="40" oninput="document.getElementById('gmV').textContent=this.value+'%'"></div></div>
+
+          <hr class="fdiv" data-label="Climate & Impact Data">
+          <div class="fg"><label>CO₂ Reduction (tonnes/year) <span class="req">*</span></label><input type="number" id="sCO2" placeholder="e.g. 500" min="0" required><span class="err-msg" id="e-sCO2">Required</span></div>
+          <div class="fg"><label>Renewable Energy Usage: <span id="reV" class="rv">60%</span></label><div class="range-row"><input type="range" id="sRenew" min="0" max="100" value="60" oninput="document.getElementById('reV').textContent=this.value+'%'"></div></div>
+          <div class="fg"><label>Primary SDG Alignment</label>
+            <select id="sSDG">
+              <option value="">Select SDG…</option>
+              <option>SDG 7 – Clean Energy</option><option>SDG 9 – Innovation & Infrastructure</option>
+              <option>SDG 11 – Sustainable Cities</option><option>SDG 12 – Responsible Consumption</option>
+              <option>SDG 13 – Climate Action</option><option>SDG 14 – Life Below Water</option>
+              <option>SDG 15 – Life on Land</option><option>SDG 17 – Partnerships</option>
+            </select></div>
+          <div class="fg"><label>Direct Jobs Created</label><input type="number" id="sJobs" placeholder="e.g. 45" min="0"></div>
+          <div class="fg"><label>Governance Score (self-assess): <span id="govV" class="rv">60</span>/100</label><div class="range-row"><input type="range" id="sGov" min="0" max="100" value="60" oninput="document.getElementById('govV').textContent=this.value"></div></div>
+          <div class="fg"><label>Social Impact Score (self-assess): <span id="siV" class="rv">55</span>/100</label><div class="range-row"><input type="range" id="sSocial" min="0" max="100" value="55" oninput="document.getElementById('siV').textContent=this.value"></div></div>
+
+          <hr class="fdiv" data-label="About Your Startup">
+          <div class="fg full"><label>Describe your solution & climate impact <span class="req">*</span></label><textarea id="sDesc" placeholder="What does your startup do? What problem does it solve? How does it create measurable climate impact?" required></textarea><span class="err-msg" id="e-sDesc">Required</span></div>
+          <div class="fg full"><label>Key Traction / Milestones</label><textarea id="sTraction" placeholder="e.g. 1,000 customers, MoU with 3 municipalities…" style="min-height:66px"></textarea></div>
+        </div>
+        <button type="submit" class="submit-btn" id="submitBtn">⚡ Analyze with ClimaMatch AI</button>
+      </form>
+    </div>
+
+    <!-- Results panel -->
+    <div id="results-panel">
+      <div class="res-header">
+        <h2>Your <span style="color:var(--crimson)">ClimaMatch</span> Results</h2>
+        <p id="resSubtitle">Powered by ClimaMatch AI</p>
+      </div>
+      <div class="res-grid" style="max-width:960px;margin:0 auto;padding:0 2.5rem">
+        <div class="score-card risk"><div class="sc-lbl">Risk Score</div><div class="sc-big" id="riskNum">—</div><div class="sc-sub" id="riskLbl">—</div><div class="sc-bar-track"><div class="sc-bar-fill" id="riskBar"></div></div></div>
+        <div class="score-card impact"><div class="sc-lbl">Climate Impact Score</div><div class="sc-big g" id="impactNum">—</div><div class="sc-sub" id="impactLbl">—</div><div class="sc-bar-track"><div class="sc-bar-fill g" id="impactBar"></div></div></div>
+        <div class="score-card esg"><div class="sc-lbl">ESG Rating</div><div class="sc-big p" id="esgGrade">—</div><div class="sc-sub" id="esgSub">—</div><div class="sc-bar-track"><div class="sc-bar-fill p" id="esgBar"></div></div></div>
+        <div class="score-card match"><div class="sc-lbl">Investor Match</div><div class="sc-big b" id="matchNum">—</div><div class="sc-sub" id="matchLbl">—</div><div class="sc-bar-track"><div class="sc-bar-fill b" id="matchBar"></div></div></div>
+        <div class="breakdown-box full-col"><div class="box-title">📊 Score Breakdown</div><div id="breakdownRows"></div></div>
+        <div class="analysis-box full-col"><div class="box-title">🤖 AI Analysis & Recommendations</div><p id="aiText">Loading…</p></div>
+        <div class="investors-box full-col"><div class="box-title">🔗 Top Investor Matches</div><div id="investorList"></div></div>
+      </div>
+      <div style="text-align:center;margin:2rem 0 1rem">
+        <button class="nav-cta" onclick="resetForm()" style="cursor:pointer">← Analyze Another Startup</button>
+      </div>
+    </div>
+  </div><!-- /panel-analyze -->
+
+
+  <!-- ══════════════════════════════════
+       PANEL 4 — OUTLOOK
+  ══════════════════════════════════ -->
+  <div class="dash-panel" id="panel-outlook">
+    <div class="outlook-layout">
+      <div class="stats-row">
+        <div class="stat-cell"><div class="stat-val">6</div><div class="stat-lbl">Startups in Database</div><div class="stat-sub">↑ Expanding Q2 2025</div></div>
+        <div class="stat-cell"><div class="stat-val">8</div><div class="stat-lbl">Investor Profiles</div><div class="stat-sub">Institutional + VC</div></div>
+        <div class="stat-cell"><div class="stat-val">4</div><div class="stat-lbl">AI Score Dimensions</div><div class="stat-sub">Risk · Impact · ESG · Match</div></div>
+        <div class="stat-cell"><div class="stat-val">Q3</div><div class="stat-lbl">Next Major Release</div><div class="stat-sub">PDF Export + Alerts</div></div>
+      </div>
+      <div class="timeline-strip">
+        <h3>📅 2025 Platform Roadmap</h3>
+        <div class="timeline-months">
+          <div class="timeline-month"><div class="tm-dot done"></div><div class="tm-label">Jan–Feb</div><div class="tm-event">Core scoring engine + MVP</div></div>
+          <div class="timeline-month"><div class="tm-dot done"></div><div class="tm-label">Mar</div><div class="tm-event">Database + saved reports + UI</div></div>
+          <div class="timeline-month"><div class="tm-dot current"></div><div class="tm-label">Apr–May</div><div class="tm-event">Investor Hub dashboard (now)</div></div>
+          <div class="timeline-month"><div class="tm-dot future"></div><div class="tm-label">Jun–Jul</div><div class="tm-event">Watchlist + score alerts</div></div>
+          <div class="timeline-month"><div class="tm-dot future"></div><div class="tm-label">Aug–Sep</div><div class="tm-event">PDF export + LP templates</div></div>
+          <div class="timeline-month"><div class="tm-dot future"></div><div class="tm-label">Oct–Dec</div><div class="tm-event">Live API + third-party data</div></div>
+        </div>
+      </div>
+      <div class="section-hdr"><h2>What Investors Can Expect — Next 6 Months</h2><p>Confirmed releases, planned features, and upcoming platform updates.</p></div>
+      <div class="outlook-grid">
+        <div class="oc"><div class="oc-meta"><span class="oc-tag">Q2 2025 — Jun</span><span class="oc-tl">~3 months</span></div><div class="oc-title">Portfolio Watchlist & Score Alerts</div><div class="oc-body">Save startups to your watchlist. When a saved startup re-submits data and their Risk, Impact, or ESG score changes by more than 10 points, you receive an instant notification — no more manually checking back.</div><div class="oc-status"><span class="s-dot dev"></span><span style="color:var(--crimson)">In Development</span></div></div>
+        <div class="oc"><div class="oc-meta"><span class="oc-tag">Q2 2025 — Jun</span><span class="oc-tl">~3 months</span></div><div class="oc-title">Expanded Database — 50+ Startups</div><div class="oc-body">Current database of 6 expands to 50+ verified climate startups across all 9 sectors, spanning India, Southeast Asia, and East Africa. Each entry will include a pre-scored report and at least one independently verified traction milestone.</div><div class="oc-status"><span class="s-dot dev"></span><span style="color:var(--crimson)">Planned</span></div></div>
+        <div class="oc"><div class="oc-meta"><span class="oc-tag">Q3 2025 — Aug</span><span class="oc-tl">~5 months</span></div><div class="oc-title">PDF Report Export & LP Templates</div><div class="oc-body">Generate a branded PDF of any startup's full analysis in one click — all four scores, AI analysis, investor matches, score breakdown. LP reporting template pre-formatted for ESG disclosure frameworks included.</div><div class="oc-status"><span class="s-dot plan"></span><span style="color:var(--steel-lt)">Scoped</span></div></div>
+        <div class="oc"><div class="oc-meta"><span class="oc-tag">Q3 2025 — Sep</span><span class="oc-tl">~6 months</span></div><div class="oc-title">Sector Benchmarking & Peer Comparison</div><div class="oc-body">See how any startup's scores compare against the median for their sector and stage. A Carbon Capture startup at Seed with a Risk Score of 62 — is that above or below average? The benchmarking layer answers this instantly.</div><div class="oc-status"><span class="s-dot plan"></span><span style="color:var(--steel-lt)">Scoped</span></div></div>
+        <div class="oc"><div class="oc-meta"><span class="oc-tag">Q4 2025 — Oct</span><span class="oc-tl">~7 months</span></div><div class="oc-title">Live API for Institutional Investors</div><div class="oc-body">Pull ClimaMatch scores directly into your own internal systems via a REST API. Submit startup data programmatically, receive structured JSON scores, and integrate with your existing deal management and CRM tooling.</div><div class="oc-status"><span class="s-dot plan"></span><span style="color:var(--steel-lt)">Planned</span></div></div>
+        <div class="oc"><div class="oc-meta"><span class="oc-tag">Q4 2025 — Dec</span><span class="oc-tl">~9 months</span></div><div class="oc-title">Third-Party Data Integrations</div><div class="oc-body">ClimaMatch will begin pulling verified third-party data — MCA21 company registrations, Crunchbase funding data, open CO₂ emissions databases — to supplement founder-submitted inputs and increase score confidence ratings.</div><div class="oc-status"><span class="s-dot plan"></span><span style="color:var(--steel-lt)">Planned</span></div></div>
+      </div>
+      <div class="section-hdr" style="margin-top:1rem"><h2>Recent Platform Updates</h2><p>What has already shipped.</p></div>
+      <div class="update-list">
+        <div class="update-item"><div class="u-date"><strong>Mar 2025</strong>Week 2</div><div><div class="u-title">Investor Hub + Bold Palette Redesign</div><div class="u-body">Full 4-tab Investor Hub: FAQ guide, startup database with saved reports, analysis tool with sample data, and platform outlook with roadmap. Contemporary & Bold 4-colour palette throughout.</div></div><span class="u-badge g">Live Now</span></div>
+        <div class="update-item"><div class="u-date"><strong>Mar 2025</strong>Week 1</div><div><div class="u-title">Startup Database + Saved Reports + Sample Input</div><div class="u-body">6 pre-scored startups, each with a saved AI analysis and scores. Load sample button, form tabs, and pre-load notice bar.</div></div><span class="u-badge g">Live Now</span></div>
+        <div class="update-item"><div class="u-date"><strong>Feb 2025</strong>Week 1</div><div><div class="u-title">Scoring Engine v2 — ESG Sub-Scores + Stage Modifier</div><div class="u-body">Separate Environmental, Social, and Governance sub-scores feeding into ESG Grade. Stage modifier added (Pre-seed: −5, Growth: +18). Investor match now Risk 35% + Impact 45% + ESG 20%.</div></div><span class="u-badge g">Live Now</span></div>
+        <div class="update-item"><div class="u-date"><strong>Jan 2025</strong>Launch</div><div><div class="u-title">ClimaMatch AI — MVP Launch at Foundathon 3.0</div><div class="u-body">Core scoring engine, form validation, AI analysis via Claude Sonnet, investor matching with 8 funds, animated score cards, fallback template analysis.</div></div><span class="u-badge gr">v1.0</span></div>
+      </div>
+    </div>
+  </div><!-- /panel-outlook -->
+
+</div><!-- /page-shell -->
+
+<script>
+// ── DATABASE ──
+const DB = [
+  { id:'greengrid', startupName:'GreenGrid Technologies', founderName:'Priya Sharma', sector:'Clean Energy', stage:'Series A', country:'India', teamSize:'28', revenue:'1200000', burnRate:'65000', funding:'3500000', runway:'22', revenueGrowth:'85', grossMargin:'52', co2:'8500', renewableEnergy:'90', sdg:'SDG 7 – Clean Energy', jobs:'120', governance:'78', socialImpact:'74',
+    description:'GreenGrid Technologies builds modular solar microgrids for rural and peri-urban communities in Tamil Nadu and Andhra Pradesh. Our plug-and-play hardware combined with smart energy management software allows villages to transition off diesel generators within 72 hours, cutting energy costs by 60% while eliminating 8,500 tonnes of CO₂ annually.',
+    traction:'1,200 households powered, MoU with Tamil Nadu Energy Development Agency, pilot expansion to 3 new districts, ₹28Cr revenue in FY24.',
+    report:{ risk:82, impact:88, esgNum:78, esgGrade:'A', matchScore:86, envScore:82, socScore:74, govScore:78,
+      aiText:'GreenGrid Technologies demonstrates an exceptionally strong financial profile (Risk: 82/100), with 85% YoY revenue growth and a comfortable 22-month runway signalling operational discipline. The climate impact score of 88/100 reflects their 8,500 tCO₂/yr reduction potential and 90% renewable operations — placing them in the top tier of Clean Energy startups reviewed. With an ESG grade of A (78/100) and investor match score of 86/100, GreenGrid is immediately fundable and should prioritise outreach to Tier-1 climate VCs. Recommended next step: formalise third-party carbon accounting certification (e.g. Gold Standard) to elevate the ESG grade from A to A+.' }
+  },
+  { id:'aquapure', startupName:'AquaPure Solutions', founderName:'Rahul Menon', sector:'Water Technology', stage:'Seed', country:'India', teamSize:'12', revenue:'280000', burnRate:'38000', funding:'900000', runway:'14', revenueGrowth:'120', grossMargin:'44', co2:'1200', renewableEnergy:'55', sdg:'SDG 11 – Sustainable Cities', jobs:'34', governance:'62', socialImpact:'80',
+    description:'AquaPure deploys low-cost ceramic water filtration units with IoT-enabled quality monitoring for rural schools and hospitals in Maharashtra. Our units remove 99.9% of pathogens without electricity, serving 45,000 beneficiaries across 220 locations.',
+    traction:'220 sites deployed, partnership with Maharashtra Jal Jeevan Mission, ₹2.8Cr ARR, UNICEF pilot in progress.',
+    report:{ risk:63, impact:72, esgNum:67, esgGrade:'B+', matchScore:69, envScore:55, socScore:80, govScore:62,
+      aiText:'AquaPure Solutions shows a moderate-to-strong financial risk profile (63/100) — 120% YoY growth is exceptional for Seed stage, though the 14-month runway warrants prompt fundraising action. The impact score of 72/100 reflects strong social outcomes (80/100 social score) for 45,000 rural beneficiaries, offset by moderate CO₂ reduction of 1,200 t/yr. With a B+ ESG grade and 69/100 investor match, AquaPure is well-positioned for impact-first funds and DFIs. Priority recommendation: extend runway to 18+ months before Series A conversations and commission an independent social impact audit to strengthen the UNICEF partnership documentation.' }
+  },
+  { id:'carboncycle', startupName:'CarbonCycle Agri', founderName:'Ananya Krishnan', sector:'Sustainable Agriculture', stage:'Series B', country:'India', teamSize:'67', revenue:'4800000', burnRate:'210000', funding:'18000000', runway:'30', revenueGrowth:'62', grossMargin:'61', co2:'22000', renewableEnergy:'72', sdg:'SDG 13 – Climate Action', jobs:'340', governance:'85', socialImpact:'82',
+    description:'CarbonCycle Agri is a precision ag platform helping 18,000 smallholder farmers across Karnataka and Telangana adopt regenerative farming practices. We issue verified carbon credits for each enrolled farm, enabling farmers to earn additional income while sequestering 22,000 tonnes of CO₂ per year.',
+    traction:'18,000 farmers onboarded, $4.2M in carbon credit sales, partnership with Tata Sustainability, Gold Standard verified, expanding to Bangladesh and Sri Lanka.',
+    report:{ risk:91, impact:96, esgNum:85, esgGrade:'A+', matchScore:94, envScore:90, socScore:82, govScore:85,
+      aiText:'CarbonCycle Agri is an exceptional investment candidate with a Risk Score of 91/100 — driven by $4.8M revenue, 61% gross margins, and a commanding 30-month runway. The Climate Impact Score of 96/100 is driven by 22,000 tCO₂/yr sequestration and Gold Standard certification, placing them among the most impactful startups on the platform. Their A+ ESG grade reflects best-in-class governance and strong social outcomes for 18,000 farming families. With a 94/100 Investor Match, CarbonCycle Agri is ready for Tier-1 growth equity; we recommend pursuing Net Zero Advisors and Sustainable Alpha Fund as priority targets.' }
+  },
+  { id:'evfleet', startupName:'EVFleet India', founderName:'Karthik Balasubramanian', sector:'Electric Mobility', stage:'Seed', country:'India', teamSize:'19', revenue:'620000', burnRate:'75000', funding:'2100000', runway:'16', revenueGrowth:'210', grossMargin:'38', co2:'3400', renewableEnergy:'80', sdg:'SDG 11 – Sustainable Cities', jobs:'85', governance:'58', socialImpact:'65',
+    description:'EVFleet India operates a B2B EV leasing and fleet management platform for last-mile delivery companies in Chennai, Bengaluru and Hyderabad, reducing operational costs by 42% vs diesel fleets.',
+    traction:'1,400 EVs deployed, clients include Swiggy, Zomato, and Porter, ₹6.2Cr ARR, expanding to Pune and Mumbai.',
+    report:{ risk:68, impact:76, esgNum:65, esgGrade:'B+', matchScore:72, envScore:72, socScore:65, govScore:58,
+      aiText:'EVFleet India demonstrates high growth momentum (210% YoY, Risk: 68/100), although the elevated burn rate of ₹75K/month against a 16-month runway demands a near-term capital raise. The 76/100 impact score reflects meaningful CO₂ avoidance of 3,400 t/yr and strong renewable charging infrastructure. The B+ ESG grade (65/100) highlights governance as the primary area for improvement — formalising a board and implementing ESG reporting would push them to A-grade territory. With a 72/100 investor match, EVFleet should target mobility-focused VCs; TerraScale Investments and GreenVentures Capital are the strongest fits.' }
+  },
+  { id:'wastewise', startupName:'WasteWise Circular', founderName:'Divya Nair', sector:'Waste Management', stage:'Idea / Pre-seed', country:'India', teamSize:'5', revenue:'0', burnRate:'12000', funding:'150000', runway:'12', revenueGrowth:'0', grossMargin:'0', co2:'450', renewableEnergy:'40', sdg:'SDG 12 – Responsible Consumption', jobs:'8', governance:'45', socialImpact:'60',
+    description:'WasteWise Circular is building a marketplace connecting commercial waste generators with certified recyclers and upcyclers in Tier-2 Indian cities, using ML routing to maximise material recovery rates.',
+    traction:'MVP live, 12 pilot clients in Coimbatore, ₹18L grant from DST, accepted into Google for Startups Accelerator.',
+    report:{ risk:34, impact:55, esgNum:50, esgGrade:'C+', matchScore:45, envScore:42, socScore:60, govScore:45,
+      aiText:'WasteWise Circular is at an early stage (Risk: 34/100) with no revenue yet and a 12-month runway, meaning fundraising is the immediate priority before scaling. The Impact Score of 55/100 reflects genuine potential — 450 tCO₂/yr at pre-seed is promising, and the ML routing approach is differentiated. With a C+ ESG grade and 45/100 investor match, the startup needs to demonstrate first revenue and basic governance structure before approaching VCs. Key recommendation: convert the 12 pilot clients to paid contracts within 90 days and publish a basic impact measurement framework to signal investor readiness.' }
+  },
+  { id:'solarfin', startupName:'SolarFin Credit', founderName:'Mohammed Ashraf', sector:'Climate FinTech', stage:'Series A', country:'India', teamSize:'41', revenue:'2100000', burnRate:'120000', funding:'7500000', runway:'25', revenueGrowth:'145', grossMargin:'68', co2:'5600', renewableEnergy:'65', sdg:'SDG 7 – Clean Energy', jobs:'160', governance:'74', socialImpact:'76',
+    description:'SolarFin Credit provides embedded climate finance — BNPL and credit products embedded into solar panel and EV purchase journeys for underbanked consumers in rural India, using alternative data scoring.',
+    traction:'₹21Cr AUM, 9,200 loans disbursed, NPA rate 2.1%, RBI NBFC license obtained, pilots with 4 solar OEMs.',
+    report:{ risk:85, impact:80, esgNum:74, esgGrade:'A', matchScore:83, envScore:70, socScore:76, govScore:74,
+      aiText:'SolarFin Credit is a high-conviction investment with a Risk Score of 85/100 — 68% gross margins and a 25-month runway with 145% YoY growth signal a capital-efficient, scaling business. The Impact Score of 80/100 reflects 5,600 tCO₂/yr avoided through financed solar adoption among underbanked populations. The A-grade ESG rating reflects strong governance (RBI compliance, board structure) and high social scores. With an 83/100 Investor Match, SolarFin is positioned for climate FinTech-focused VCs; SRM Impact Ventures and GreenVentures Capital are prime targets.' }
+  }
+];
+
+const SAMPLE = DB[0];
+
+// ── RENDER DATABASE ──
+let currentFilter = 'all', currentSearch = '';
+function renderDB() {
+  const grid = document.getElementById('dbGrid');
+  const filtered = DB.filter(s => {
+    const matchFilter = currentFilter === 'all' || s.sector === currentFilter;
+    const matchSearch = !currentSearch || s.startupName.toLowerCase().includes(currentSearch) || s.sector.toLowerCase().includes(currentSearch) || s.country.toLowerCase().includes(currentSearch);
+    return matchFilter && matchSearch;
+  });
+  grid.innerHTML = filtered.length ? filtered.map(s => {
+    const r = s.report;
+    return `<div class="db-card">
+      <div class="db-card-head">
+        <div class="db-name">${s.startupName}</div>
+        <div class="db-stage">${s.stage}</div>
+      </div>
+      <div class="db-sector">◈ ${s.sector} · ${s.country}</div>
+      <div class="db-desc">${s.description.substring(0,115)}…</div>
+      <div class="db-scores">
+        <span class="db-score-tag">Risk: ${r.risk}/100</span>
+        <span class="db-score-tag">Impact: ${r.impact}/100</span>
+        <span class="db-score-tag hi">ESG: ${r.esgGrade}</span>
+        <span class="db-score-tag hi">Match: ${r.matchScore}%</span>
+      </div>
+      <div class="db-btns">
+        <button class="db-btn primary" onclick="loadFromDB('${s.id}')">✍ Load into Form</button>
+        <button class="db-btn secondary" onclick="viewSavedReport('${s.id}')">📋 View Report</button>
+      </div>
+    </div>`;
+  }).join('') : '<div style="padding:2rem;color:var(--text-dim);font-family:Courier Prime,monospace;font-size:0.8rem">No startups match your filter.</div>';
+}
+
+function filterDB() {
+  currentSearch = document.getElementById('dbSearch').value.toLowerCase();
+  renderDB();
+}
+function filterByTag(btn, tag) {
+  currentFilter = tag;
+  document.querySelectorAll('.db-filter').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderDB();
+}
+renderDB();
+
+// ── FILL FORM FROM DATA ──
+function fillForm(d) {
+  const m = { sName:'startupName', sFounder:'founderName', sSector:'sector', sStage:'stage', sCountry:'country', sTeam:'teamSize', sRevenue:'revenue', sBurn:'burnRate', sFunding:'funding', sRunway:'runway', sGrowth:'revenueGrowth', sMargin:'grossMargin', sCO2:'co2', sRenew:'renewableEnergy', sSDG:'sdg', sJobs:'jobs', sGov:'governance', sSocial:'socialImpact', sDesc:'description', sTraction:'traction' };
+  for(const [id,key] of Object.entries(m)) { const el=document.getElementById(id); if(el && d[key]!==undefined) el.value=d[key]; }
+  document.getElementById('rgV').textContent = d.revenueGrowth+'%';
+  document.getElementById('gmV').textContent = d.grossMargin+'%';
+  document.getElementById('reV').textContent  = d.renewableEnergy+'%';
+  document.getElementById('govV').textContent = d.governance;
+  document.getElementById('siV').textContent  = d.socialImpact;
+}
+
+function loadSample() {
+  fillForm(SAMPLE);
+  document.getElementById('preloadBar').style.display = 'flex';
+  document.getElementById('preloadMsg').textContent = '✦ Sample data loaded: GreenGrid Technologies — edit any field before submitting';
+  document.getElementById('results-panel').style.display = 'none';
+}
+
+function loadFromDB(id) {
+  const s = DB.find(x=>x.id===id); if(!s) return;
+  fillForm(s);
+  document.getElementById('preloadBar').style.display = 'flex';
+  document.getElementById('preloadMsg').textContent = `✦ Loaded: ${s.startupName} — edit any field before submitting`;
+  document.getElementById('results-panel').style.display = 'none';
+  switchDash('analyze', new Event('click'));
+}
+
+function viewSavedReport(id) {
+  const s = DB.find(x=>x.id===id); if(!s) return;
+  const r = s.report;
+  const investors = matchInvestors(s, r);
+  render(s, r, investors, r.aiText, true);
+  switchDash('analyze', new Event('click'));
+}
+
+// ── SCORING ──
+function computeScores(d) {
+  let risk=50;
+  const rev=+d.revenue||0, burn=+d.burnRate||1;
+  if(rev>1e6)risk+=15;else if(rev>5e5)risk+=10;else if(rev>1e5)risk+=5;else if(rev===0)risk-=10;
+  const br=(burn*12)/Math.max(rev,1);
+  if(br<0.5)risk+=12;else if(br<1)risk+=6;else if(br>3)risk-=15;else if(br>2)risk-=8;
+  const runway=+d.runway||0;
+  if(runway>24)risk+=10;else if(runway>12)risk+=5;else if(runway<6&&runway>0)risk-=10;
+  const growth=+d.revenueGrowth||0;
+  if(growth>100)risk+=12;else if(growth>50)risk+=8;else if(growth>20)risk+=4;else if(growth<0)risk-=8;
+  const margin=+d.grossMargin||0;
+  if(margin>60)risk+=8;else if(margin>30)risk+=4;else if(margin<0)risk-=10;
+  const sm={'Idea / Pre-seed':-5,'Seed':0,'Series A':8,'Series B':14,'Growth':18};
+  risk+=sm[d.stage]||0;
+  if((+d.teamSize||1)>20)risk+=5;else if((+d.teamSize||1)>5)risk+=2;
+  risk=Math.min(100,Math.max(0,Math.round(risk)));
+
+  let impact=40;
+  const co2=+d.co2||0;
+  if(co2>10000)impact+=25;else if(co2>1000)impact+=18;else if(co2>100)impact+=10;else if(co2>10)impact+=4;
+  const renew=+d.renewableEnergy||0;
+  impact+=Math.round(renew*0.15);
+  impact+=Math.round((+d.socialImpact||0)*0.1);
+  impact+=Math.round((+d.governance||0)*0.08);
+  const jobs=+d.jobs||0;
+  if(jobs>100)impact+=8;else if(jobs>20)impact+=4;else if(jobs>5)impact+=2;
+  const sb={'Carbon Capture':15,'Clean Energy':12,'Electric Mobility':10,'Water Technology':8,'Sustainable Agriculture':8,'Waste Management':7,'Green Construction':6,'Climate FinTech':5,'Other CleanTech':4};
+  impact+=sb[d.sector]||3;
+  if(d.sdg)impact+=5;
+  impact=Math.min(100,Math.max(0,Math.round(impact)));
+
+  const envRaw=Math.round(renew*0.4+(co2/200)*2+(sb[d.sector]||3)*2);
+  const envScore=Math.min(100,Math.max(0,envRaw));
+  const socScore=+d.socialImpact||50, govScore=+d.governance||50;
+  const esgNum=Math.min(100,Math.max(0,Math.round((envScore+socScore+govScore)/3)));
+  const esgGrade=esgNum>=85?'A+':esgNum>=75?'A':esgNum>=65?'B+':esgNum>=55?'B':esgNum>=45?'C+':'C';
+  const matchScore=Math.min(100,Math.max(0,Math.round(risk*0.35+impact*0.45+esgNum*0.2)));
+  return {risk,impact,esgNum,esgGrade,matchScore,envScore,socScore,govScore};
+}
+
+// ── INVESTORS ──
+const INVESTORS=[
+  {name:'GreenVentures Capital',  type:'Climate VC',          sectors:['Clean Energy','Electric Mobility','Carbon Capture'],            minI:60,minR:50},
+  {name:'ClimateFirst Fund',      type:'Impact Fund',         sectors:['Sustainable Agriculture','Water Technology','Waste Management'],minI:55,minR:45},
+  {name:'EcoGrowth Partners',     type:'Growth Equity',       sectors:['Green Construction','Climate FinTech','Other CleanTech'],       minI:50,minR:55},
+  {name:'SRM Impact Ventures',    type:'Institutional VC',    sectors:['Clean Energy','Climate FinTech','Sustainable Agriculture'],     minI:40,minR:40},
+  {name:'Net Zero Advisors',      type:'ESG Fund',            sectors:['Carbon Capture','Water Technology','Electric Mobility'],        minI:65,minR:50},
+  {name:'Sustainable Alpha Fund', type:'Hedge Fund / ESG',    sectors:['Clean Energy','Green Construction','Waste Management'],        minI:55,minR:60},
+  {name:'TerraScale Investments', type:'Series A Specialist', sectors:['Other CleanTech','Electric Mobility','Clean Energy'],          minI:50,minR:55},
+  {name:'Blue Horizon Capital',   type:'Ocean & Water VC',    sectors:['Water Technology','Sustainable Agriculture','Waste Management'],minI:60,minR:45},
+];
+function matchInvestors(d,sc){
+  return INVESTORS.map(inv=>{ let s=50; if(inv.sectors.includes(d.sector))s+=25; if(sc.impact>=inv.minI)s+=15; if(sc.risk>=inv.minR)s+=10; s+=Math.round(sc.esgNum*0.05); return {...inv,compat:Math.min(99,s)}; }).sort((a,b)=>b.compat-a.compat).slice(0,4);
+}
+
+// ── AI ──
+async function getAI(d,sc){
+  const prompt=`You are ClimaMatch AI, a climate investment analyst.\nStartup: ${d.startupName} (${d.sector}, ${d.stage}, ${d.country})\nRevenue: $${d.revenue}/yr | Burn: $${d.burnRate}/mo | Runway: ${d.runway||'N/A'} months\nCO₂: ${d.co2} t/yr | Renewable: ${d.renewableEnergy}%\nScores — Risk: ${sc.risk}/100 | Impact: ${sc.impact}/100 | ESG: ${sc.esgGrade} (${sc.esgNum}/100) | Match: ${sc.matchScore}/100\nDescription: ${d.description}\nTraction: ${d.traction||'Not provided'}\n\nWrite a concise 4-sentence investment analysis: (1) financial strength/concern from scores, (2) climate impact assessment, (3) investment readiness, (4) one specific actionable improvement. Reference actual scores. Under 130 words.`;
+  try {
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})});
+    const data=await res.json();
+    return data.content?.map(b=>b.type==='text'?b.text:'').join('')||fallback(d,sc);
+  }catch(e){return fallback(d,sc);}
+}
+function fallback(d,sc){
+  const rl=sc.risk>=70?'strong':sc.risk>=50?'moderate':'elevated';
+  const il=sc.impact>=70?'high':sc.impact>=50?'moderate':'developing';
+  return `${d.startupName} shows a ${rl} financial risk profile (${sc.risk}/100) with ${il} climate impact potential (${sc.impact}/100). The ${d.sector} sector focus in ${d.country} is well-aligned with current green investment mandates. With an ESG grade of ${sc.esgGrade} and investor match score of ${sc.matchScore}/100, the startup ${sc.risk<55?'should focus on extending runway and improving unit economics':'is positioned well for investor conversations'}. Key recommendation: ${sc.impact<60?'increase CO₂ measurability and renewable energy adoption':'strengthen governance frameworks to achieve an A-grade ESG rating'}.`;
+}
+
+// ── ANIMATE ──
+function animNum(el,target,suffix=''){
+  const start=performance.now(),dur=1300;
+  const tick=now=>{const p=Math.min((now-start)/dur,1),ease=1-Math.pow(1-p,3);el.textContent=Math.round(ease*target)+suffix;if(p<1)requestAnimationFrame(tick);};
+  requestAnimationFrame(tick);
+}
+function animBar(id,pct,delay=350){setTimeout(()=>{const el=document.getElementById(id);if(el)el.style.width=pct+'%';},delay);}
+
+// ── RENDER RESULTS ──
+function render(d,sc,investors,ai,isSaved=false){
+  const riskColor=sc.risk>=70?'g':sc.risk>=50?'a':'r';
+  const riskTxt=sc.risk>=80?'Very Low Risk':sc.risk>=65?'Low Risk':sc.risk>=50?'Moderate Risk':sc.risk>=35?'High Risk':'Very High Risk';
+  const rNum=document.getElementById('riskNum');
+  rNum.className='sc-big '+riskColor; animNum(rNum,sc.risk,'/100');
+  document.getElementById('riskLbl').textContent=riskTxt;
+  document.getElementById('riskBar').className='sc-bar-fill '+riskColor; animBar('riskBar',sc.risk);
+  animNum(document.getElementById('impactNum'),sc.impact,'/100');
+  document.getElementById('impactLbl').textContent=sc.impact>=80?'Exceptional Climate Impact':sc.impact>=65?'Strong Climate Impact':sc.impact>=50?'Moderate Climate Impact':'Developing Impact';
+  animBar('impactBar',sc.impact);
+  document.getElementById('esgGrade').textContent=sc.esgGrade;
+  document.getElementById('esgSub').textContent=`ESG Score: ${sc.esgNum}/100`;
+  animBar('esgBar',sc.esgNum);
+  animNum(document.getElementById('matchNum'),sc.matchScore,'/100');
+  document.getElementById('matchLbl').textContent=sc.matchScore>=70?'Strong Match Profile':sc.matchScore>=50?'Good Match Profile':'Developing Profile';
+  animBar('matchBar',sc.matchScore);
+  const rev=+d.revenue||0,burn=+d.burnRate||1;
+  const rows=[['Startup',d.startupName],['Founder',d.founderName],['Sector',d.sector],['Stage',d.stage],['Country',d.country],['Annual Revenue','$'+Number(rev).toLocaleString()],['Monthly Burn','$'+Number(burn).toLocaleString()],['Burn/Revenue Ratio',rev>0?((burn*12/rev)*100).toFixed(1)+'%':'N/A'],['Runway',d.runway?d.runway+' months':'N/A'],['CO₂ Reduction',Number(d.co2||0).toLocaleString()+' t/yr'],['Renewable Energy',(d.renewableEnergy||0)+'%'],['ESG Grade',sc.esgGrade]];
+  document.getElementById('breakdownRows').innerHTML=rows.map(([k,v])=>`<div class="br-row"><span class="br-key">${k}</span><span class="br-val">${v}</span></div>`).join('');
+  document.getElementById('aiText').textContent=ai;
+  document.getElementById('investorList').innerHTML=investors.map(inv=>`<div class="inv-card"><div><div class="inv-name">${inv.name}</div><div class="inv-type">${inv.type}</div></div><div class="inv-score">${inv.compat}%</div></div>`).join('');
+  document.getElementById('resSubtitle').textContent=(isSaved?'Saved report — ':'Live analysis — ')+d.startupName+' · '+new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
+  const panel=document.getElementById('results-panel');
+  panel.style.display='block';
+  setTimeout(()=>panel.scrollIntoView({behavior:'smooth',block:'start'}),200);
+}
+
+// ── LOADER ──
+const STEPS=['Parsing financial data…','Calculating burn & runway…','Running climate impact model…','Scoring ESG components…','Matching investor database…','Generating AI recommendations…','Finalizing results…'];
+function runLoader(cb){
+  const ov=document.getElementById('loadingOverlay'),st=document.getElementById('loaderStep');
+  ov.classList.add('active');let i=0;
+  const iv=setInterval(()=>{st.textContent=STEPS[i++];if(i>=STEPS.length){clearInterval(iv);setTimeout(()=>{ov.classList.remove('active');cb();},500);}},480);
+}
+
+// ── VALIDATION ──
+const REQ=['sName','sFounder','sSector','sStage','sCountry','sRevenue','sBurn','sCO2','sDesc'];
+function validate(){
+  let ok=true;
+  REQ.forEach(id=>{const el=document.getElementById(id),em=document.getElementById('e-'+id);if(!el.value.trim()){el.classList.add('err');if(em)em.style.display='block';ok=false;}else{el.classList.remove('err');if(em)em.style.display='none';}});
+  return ok;
+}
+REQ.forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('input',()=>{if(el.value.trim()){el.classList.remove('err');const em=document.getElementById('e-'+id);if(em)em.style.display='none';}});});
+
+// ── SUBMIT ──
+document.getElementById('startupForm').addEventListener('submit',async function(e){
+  e.preventDefault();
+  if(!validate()){document.querySelector('.err')?.scrollIntoView({behavior:'smooth',block:'center'});return;}
+  const d={
+    startupName:document.getElementById('sName').value.trim(), founderName:document.getElementById('sFounder').value.trim(),
+    sector:document.getElementById('sSector').value, stage:document.getElementById('sStage').value,
+    country:document.getElementById('sCountry').value.trim(), teamSize:document.getElementById('sTeam').value,
+    revenue:document.getElementById('sRevenue').value, burnRate:document.getElementById('sBurn').value,
+    funding:document.getElementById('sFunding').value, runway:document.getElementById('sRunway').value,
+    revenueGrowth:document.getElementById('sGrowth').value, grossMargin:document.getElementById('sMargin').value,
+    co2:document.getElementById('sCO2').value, renewableEnergy:document.getElementById('sRenew').value,
+    sdg:document.getElementById('sSDG').value, jobs:document.getElementById('sJobs').value,
+    governance:document.getElementById('sGov').value, socialImpact:document.getElementById('sSocial').value,
+    description:document.getElementById('sDesc').value.trim(), traction:document.getElementById('sTraction').value.trim(),
+  };
+  document.getElementById('submitBtn').disabled=true;
+  const sc=computeScores(d),investors=matchInvestors(d,sc);
+  runLoader(async()=>{const ai=await getAI(d,sc);render(d,sc,investors,ai);document.getElementById('submitBtn').disabled=false;});
+});
+
+// ── RESET ──
+function resetForm(){
+  document.getElementById('results-panel').style.display='none';
+  document.getElementById('startupForm').reset();
+  ['rgV','gmV','reV'].forEach(id=>document.getElementById(id).textContent=id==='reV'?'60%':id==='rgV'?'30%':'40%');
+  document.getElementById('govV').textContent='60'; document.getElementById('siV').textContent='55';
+  document.getElementById('preloadBar').style.display='none';
+  document.getElementById('panel-analyze').scrollIntoView({behavior:'smooth'});
+}
+
+// ── TAB SWITCHING ──
+function switchDash(panel,e){
+  if(e&&e.preventDefault)e.preventDefault();
+  document.querySelectorAll('.dash-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.dash-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('panel-'+panel).classList.add('active');
+  document.querySelectorAll('.dash-tab').forEach(t=>{if(t.getAttribute('onclick')&&t.getAttribute('onclick').includes("'"+panel+"'"))t.classList.add('active');});
+  if(panel==='faq') setTimeout(animateFaqBars,100);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function switchFaq(section,btn){
+  document.querySelectorAll('.faq-section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.faq-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('faq-'+section).classList.add('active');
+  btn.classList.add('active');
+  if(section==='score')setTimeout(animateFaqBars,100);
+}
+
+function animateFaqBars(){
+  document.querySelectorAll('.score-bar-fill[data-w]').forEach(bar=>{setTimeout(()=>{bar.style.width=bar.getAttribute('data-w');},200);});
+}
+
+// ── SCROLL REVEAL ──
+const revObs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');revObs.unobserve(e.target);}});},{threshold:0.08});
+document.querySelectorAll('.reveal').forEach(el=>revObs.observe(el));
+
+// Animate FAQ items on load
+setTimeout(()=>{
+  document.querySelectorAll('.faq-item').forEach((el,i)=>{
+    el.style.opacity='0';el.style.transform='translateY(14px)';el.style.transition=`opacity 0.4s ${i*0.07}s ease,transform 0.4s ${i*0.07}s ease`;
+    setTimeout(()=>{el.style.opacity='1';el.style.transform='translateY(0)';},50+i*70);
+  });
+  animateFaqBars();
+},100);
+</script>
+</body>
+</html>
