@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Foundathon 3.0 — Investor Hub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #07080d;
+      --surface: #0e1018;
+      --card: #12151f;
+      --card-2: #171b27;
+      --border: rgba(255,255,255,0.07);
+      --border-bright: rgba(255,255,255,0.14);
+      --text: #f0f2f8;
+      --muted: #6b7490;
+      --muted2: #9aa3be;
+      --primary: #3d7eff;
+      --primary-dim: rgba(61,126,255,0.15);
+      --primary-glow: rgba(61,126,255,0.3);
+      --accent: #00e5b0;
+      --accent-dim: rgba(0,229,176,0.12);
+      --accent-glow: rgba(0,229,176,0.25);
+      --danger: #ff4d6d;
+      --danger-dim: rgba(255,77,109,0.12);
+      --warn: #ffb347;
+      --warn-dim: rgba(255,179,71,0.12);
+      --gold: #f5c842;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      line-height: 1.65;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse 900px 500px at 10% -10%, rgba(61,126,255,0.08) 0%, transparent 70%),
+        radial-gradient(ellipse 700px 400px at 90% 5%, rgba(0,229,176,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 600px 600px at 50% 100%, rgba(61,126,255,0.04) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: #2a2f45; border-radius: 99px; }
+
+    /* ── HEADER ── */
+    header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(7,8,13,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      height: 64px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo-wrap { display: flex; align-items: center; gap: 14px; }
+    .logo-icon {
+      width: 38px; height: 38px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Syne', sans-serif; font-weight: 800; font-size: 18px;
+      box-shadow: 0 0 20px var(--primary-glow);
+    }
+    .logo-text { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; letter-spacing: -.3px; }
+    .logo-text span { color: var(--accent); }
+    .header-right { display: flex; align-items: center; gap: 12px; }
+    .badge-pill {
+      background: var(--card-2);
+      border: 1px solid var(--border-bright);
+      padding: 6px 14px; border-radius: 99px;
+      font-size: 12px; font-weight: 500; color: var(--muted2);
+      letter-spacing: .3px;
+    }
+    .live-dot {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12px; color: var(--accent); font-weight: 500;
+    }
+    .live-dot::before {
+      content: ''; width: 7px; height: 7px; border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 var(--accent-glow); }
+      50% { opacity: .7; box-shadow: 0 0 0 5px transparent; }
+    }
+
+    /* ── MAIN LAYOUT ── */
+    main { max-width: 1280px; margin: 0 auto; padding: 28px 24px 60px; position: relative; z-index: 1; }
+
+    /* ── HERO BANNER ── */
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(61,126,255,0.1) 0%, rgba(0,229,176,0.06) 100%);
+      border: 1px solid var(--border-bright);
+      border-radius: 20px;
+      padding: 28px 32px;
+      margin-bottom: 24px;
+      display: flex; justify-content: space-between; align-items: center; gap: 20px;
+      flex-wrap: wrap;
+    }
+    .hero-title { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; line-height: 1.2; }
+    .hero-title span { background: linear-gradient(90deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero-sub { color: var(--muted2); margin-top: 6px; font-size: 14px; max-width: 480px; }
+    .stat-chips { display: flex; gap: 12px; flex-wrap: wrap; }
+    .stat-chip {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 12px 18px; text-align: center; min-width: 100px;
+    }
+    .stat-chip .val { font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 700; }
+    .stat-chip .lbl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-top: 2px; }
+
+    /* ── TABS ── */
+    .tabs { display: flex; gap: 4px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 4px; margin-bottom: 20px; width: fit-content; }
+    .tab-btn {
+      padding: 8px 18px; border-radius: 9px; border: none; cursor: pointer;
+      font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
+      background: transparent; color: var(--muted2);
+      transition: all .2s;
+    }
+    .tab-btn.active { background: var(--primary); color: #fff; box-shadow: 0 2px 12px var(--primary-glow); }
+    .tab-btn:hover:not(.active) { color: var(--text); background: var(--card-2); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── GRID LAYOUT ── */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 960px) { .dashboard-grid { grid-template-columns: 1fr; } }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 22px;
+      transition: border-color .3s;
+    }
+    .card:hover { border-color: var(--border-bright); }
+    .card-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 18px; padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .card-title { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; }
+    .section-label {
+      font-size: 11px; font-weight: 600; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
+    }
+
+    /* ── INVESTOR PROFILE DISPLAY ── */
+    .pref-row { display: flex; flex-direction: column; gap: 3px; margin-bottom: 14px; }
+    .pref-label { font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); font-weight: 600; }
+    .pref-value { font-size: 14px; color: var(--muted2); font-weight: 400; }
+    .pref-value.highlight { color: var(--text); font-weight: 500; }
+
+    /* ── TAGS ── */
+    .tag {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 10px; border-radius: 99px;
+      font-size: 12px; font-weight: 500;
+      background: var(--card-2); border: 1px solid var(--border);
+      color: var(--muted2);
+    }
+    .tag.primary { background: var(--primary-dim); border-color: rgba(61,126,255,0.25); color: var(--primary); }
+    .tag.accent { background: var(--accent-dim); border-color: rgba(0,229,176,0.25); color: var(--accent); }
+    .tag.warn { background: var(--warn-dim); border-color: rgba(255,179,71,0.25); color: var(--warn); }
+    .tag.danger { background: var(--danger-dim); border-color: rgba(255,77,109,0.25); color: var(--danger); }
+
+    /* ── STARTUP CARDS ── */
+    .startup-card {
+      background: var(--card-2); border: 1px solid var(--border);
+      border-radius: 14px; padding: 16px 18px; margin-bottom: 12px;
+      cursor: pointer; transition: all .25s; position: relative; overflow: hidden;
+    }
+    .startup-card:hover { border-color: var(--border-bright); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0,0,0,.3); }
+    .startup-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+    .startup-name { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; }
+    .startup-desc { font-size: 13px; color: var(--muted2); line-height: 1.5; margin-bottom: 10px; }
+    .startup-metrics { display: flex; gap: 6px; flex-wrap: wrap; }
+
+    /* ── MATCH SCORE BADGE ── */
+    .match-badge {
+      position: absolute; top: 14px; right: 14px;
+      font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 800;
+      padding: 4px 12px; border-radius: 10px;
+    }
+    .match-low { background: var(--warn-dim); color: var(--warn); border: 1px solid rgba(255,179,71,.2); }
+    .match-mid { background: var(--primary-dim); color: var(--primary); border: 1px solid rgba(61,126,255,.2); }
+    .match-high { background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(0,229,176,.2); }
+
+    /* ── SCORE RING ── */
+    .score-ring-wrap { display: flex; gap: 10px; }
+    .score-ring {
+      display: flex; flex-direction: column; align-items: center;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 10px; padding: 8px 14px; min-width: 64px;
+    }
+    .score-val { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; }
+    .score-lbl { font-size: 10px; color: var(--muted); letter-spacing: .5px; text-transform: uppercase; }
+
+    /* ── FORM STYLES ── */
+    .form-row { display: flex; gap: 14px; margin-bottom: 12px; }
+    .form-row > * { flex: 1; }
+    .form-group { margin-bottom: 12px; }
+    .form-group label {
+      display: block; font-size: 12px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: .4px; color: var(--muted); margin-bottom: 6px;
+    }
+    input[type="text"], input[type="number"], textarea, select {
+      width: 100%; padding: 10px 14px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; color: var(--text); font-family: 'DM Sans', sans-serif;
+      font-size: 14px; transition: border-color .2s, box-shadow .2s;
+    }
+    input:focus, textarea:focus, select:focus {
+      outline: none; border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-dim);
+    }
+    textarea { min-height: 80px; resize: vertical; }
+    select option { background: #1a1e2e; }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 9px 18px; border-radius: 10px; border: none;
+      font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
+      cursor: pointer; transition: all .2s; white-space: nowrap;
+    }
+    .btn-primary { background: var(--primary); color: #fff; box-shadow: 0 4px 15px var(--primary-glow); }
+    .btn-primary:hover { background: #5a8fff; box-shadow: 0 6px 20px var(--primary-glow); }
+    .btn-ghost { background: var(--card-2); color: var(--muted2); border: 1px solid var(--border); }
+    .btn-ghost:hover { color: var(--text); border-color: var(--border-bright); background: #1e2235; }
+    .btn-accent { background: var(--accent); color: #07080d; font-weight: 600; box-shadow: 0 4px 15px var(--accent-glow); }
+    .btn-accent:hover { background: #00ffbd; }
+    .btn-danger { background: var(--danger-dim); color: var(--danger); border: 1px solid rgba(255,77,109,.2); }
+    .btn-danger:hover { background: rgba(255,77,109,.2); }
+    .btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 8px; }
+
+    /* ── SECTOR CHECKBOXES ── */
+    .sector-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .sector-chip {
+      display: flex; align-items: center; gap: 6px;
+      padding: 6px 14px; border-radius: 99px;
+      border: 1px solid var(--border); background: var(--surface);
+      color: var(--muted2); font-size: 13px; cursor: pointer;
+      transition: all .2s; user-select: none;
+    }
+    .sector-chip input { display: none; }
+    .sector-chip.selected { background: var(--primary-dim); border-color: rgba(61,126,255,.4); color: var(--primary); }
+
+    /* ── REPORT SECTION ── */
+    .report-card {
+      background: var(--card-2); border: 1px solid var(--border);
+      border-radius: 14px; padding: 18px; margin-bottom: 12px;
+    }
+    .report-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .report-title { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; }
+    .report-meta { font-size: 12px; color: var(--muted); }
+    .report-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 14px; }
+    @media (max-width: 600px) { .report-grid { grid-template-columns: 1fr; } }
+    .report-metric {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 10px; padding: 12px;
+    }
+    .report-metric .val { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 700; margin-bottom: 2px; }
+    .report-metric .lbl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 1000;
+      background: rgba(0,0,0,.75); backdrop-filter: blur(6px);
+      align-items: center; justify-content: center; padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: var(--card); border: 1px solid var(--border-bright);
+      border-radius: 20px; padding: 28px; max-width: 580px; width: 100%;
+      max-height: 90vh; overflow-y: auto;
+      box-shadow: 0 24px 80px rgba(0,0,0,.6);
+      animation: modalIn .25s ease;
+    }
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(.95) translateY(10px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; }
+    .modal-title { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; }
+    .close-btn { background: none; border: none; color: var(--muted); font-size: 24px; cursor: pointer; padding: 0; line-height: 1; }
+    .close-btn:hover { color: var(--text); }
+
+    /* ── STATUS MESSAGES ── */
+    .status-msg { font-size: 13px; padding: 8px 14px; border-radius: 8px; margin-top: 10px; display: none; }
+    .status-msg.success { background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(0,229,176,.2); display: block; }
+    .status-msg.error { background: var(--danger-dim); color: var(--danger); border: 1px solid rgba(255,77,109,.2); display: block; }
+
+    /* ── PROGRESS BAR ── */
+    .progress-bar {
+      height: 5px; border-radius: 99px;
+      background: var(--border); overflow: hidden; margin-top: 6px;
+    }
+    .progress-fill {
+      height: 100%; border-radius: 99px;
+      transition: width .6s cubic-bezier(.4,0,.2,1);
+    }
+    .fill-primary { background: linear-gradient(90deg, var(--primary), #7aa4ff); }
+    .fill-accent { background: linear-gradient(90deg, var(--accent), #00ffbd); }
+    .fill-warn { background: linear-gradient(90deg, var(--warn), #ffd580); }
+    .fill-danger { background: linear-gradient(90deg, var(--danger), #ff8fa3); }
+
+    /* ── COLLAPSIBLE FORM ── */
+    .collapsible-form { overflow: hidden; transition: max-height .35s cubic-bezier(.4,0,.2,1); max-height: 0; }
+    .collapsible-form.open { max-height: 1200px; }
+    .form-divider { border-top: 1px solid var(--border); margin: 18px 0; }
+
+    /* ── EMPTY STATE ── */
+    .empty-state { text-align: center; padding: 32px 20px; color: var(--muted); }
+    .empty-state .icon { font-size: 36px; margin-bottom: 10px; }
+    .empty-state p { font-size: 14px; }
+
+    /* ── TABLE ── */
+    .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .data-table th { font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); font-weight: 600; padding: 10px 12px; border-bottom: 1px solid var(--border); text-align: left; }
+    .data-table td { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.04); color: var(--muted2); }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr:hover td { background: rgba(255,255,255,0.02); color: var(--text); }
+
+    /* ── TOP RANK BADGE ── */
+    .rank-1 { color: var(--gold); }
+    .rank-2 { color: var(--muted2); }
+    .rank-3 { color: var(--warn); }
+
+    /* ── SPINNER ── */
+    .spinner {
+      width: 18px; height: 18px; border-radius: 50%;
+      border: 2px solid rgba(255,255,255,.15);
+      border-top-color: var(--primary);
+      animation: spin .7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── SECTION DIVIDER ── */
+    .divider { height: 1px; background: var(--border); margin: 20px 0; }
+
+    /* ── TOOLTIP ── */
+    [data-tip] { position: relative; cursor: help; }
+    [data-tip]::after {
+      content: attr(data-tip);
+      position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%);
+      background: #1e2235; border: 1px solid var(--border-bright); border-radius: 8px;
+      padding: 6px 10px; font-size: 12px; white-space: nowrap; color: var(--text);
+      pointer-events: none; opacity: 0; transition: opacity .2s; z-index: 200;
+    }
+    [data-tip]:hover::after { opacity: 1; }
+
+    /* ── ANIMATIONS ── */
+    .fade-in { animation: fadeIn .4s ease forwards; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    .notification {
+      position: fixed; bottom: 24px; right: 24px; z-index: 2000;
+      background: var(--card-2); border: 1px solid var(--border-bright);
+      border-radius: 12px; padding: 14px 18px;
+      display: flex; align-items: center; gap: 10px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.5);
+      font-size: 14px; max-width: 320px;
+      transform: translateY(100px); opacity: 0;
+      transition: all .35s cubic-bezier(.4,0,.2,1);
+    }
+    .notification.show { transform: translateY(0); opacity: 1; }
+    .notif-icon { font-size: 20px; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+
+  <!-- NOTIFICATION TOAST -->
+  <div id="toast" class="notification">
+    <span class="notif-icon" id="toastIcon">✓</span>
+    <span id="toastMsg">Message here</span>
+  </div>
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo-wrap">
+      <div class="logo-icon">F</div>
+      <div class="logo-text">Foundathon <span>3.0</span></div>
+    </div>
+    <div class="header-right">
+      <span class="live-dot">Live</span>
+      <span class="badge-pill">Investor Hub</span>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO BANNER -->
+    <div class="hero-banner">
+      <div>
+        <div class="hero-title">ClimaMatch <span>Intelligence</span></div>
+        <p class="hero-sub">AI-powered investor matching for climate-tech startups. Find opportunities aligned with your impact strategy.</p>
+      </div>
+      <div class="stat-chips">
+        <div class="stat-chip">
+          <div class="val" id="statStartups" style="color:var(--primary)">—</div>
+          <div class="lbl">Startups</div>
+        </div>
+        <div class="stat-chip">
+          <div class="val" id="statMatches" style="color:var(--accent)">—</div>
+          <div class="lbl">Top Matches</div>
+        </div>
+        <div class="stat-chip">
+          <div class="val" id="statReports" style="color:var(--gold)">—</div>
+          <div class="lbl">Reports</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('dashboard')">Dashboard</button>
+      <button class="tab-btn" onclick="switchTab('database')">Database</button>
+      <button class="tab-btn" onclick="switchTab('reports')">Reports</button>
+      <button class="tab-btn" onclick="switchTab('add')">+ Add Startup</button>
+    </div>
+
+    <!-- TAB: DASHBOARD -->
+    <div id="tab-dashboard" class="tab-panel active">
+      <div class="dashboard-grid">
+        <!-- LEFT: Investor Profile -->
+        <div>
+          <div class="card" style="margin-bottom:16px;">
+            <div class="card-header">
+              <span class="card-title">Investor Profile</span>
+              <button class="btn btn-ghost btn-sm" onclick="openPrefsModal()">✏ Edit</button>
+            </div>
+            <div id="prefsDisplay">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+
+          <!-- Add Startup Toggle -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Quick Add Startup</span>
+              <button class="btn btn-ghost btn-sm" id="toggleQuickAdd" onclick="toggleQuickForm()">+ Expand</button>
+            </div>
+            <div class="collapsible-form" id="quickAddForm">
+              <form id="startupFormMain" autocomplete="off" onsubmit="submitStartup(event, 'main')">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>Startup Name</label>
+                    <input type="text" id="sName" required placeholder="EcoNova Energy" />
+                  </div>
+                  <div class="form-group">
+                    <label>Sector</label>
+                    <select id="sSector" required>
+                      <option value="Climate Tech">Climate Tech</option>
+                      <option value="Energy">Energy</option>
+                      <option value="Agriculture">Agriculture</option>
+                      <option value="Transport">Transport</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group"><label>Revenue ($)</label><input type="number" id="sRevenue" min="0" placeholder="150000" /></div>
+                  <div class="form-group"><label>Burn Rate ($)</label><input type="number" id="sBurn" min="0" placeholder="70000" /></div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group"><label>ESG Score (0-100)</label><input type="number" id="sEsg" min="0" max="100" value="70" /></div>
+                  <div class="form-group"><label>CO2 Reduction (t/yr)</label><input type="number" id="sCo2" min="0" value="200" /></div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group"><label>Team Size</label><input type="number" id="sTeam" min="1" value="5" /></div>
+                  <div class="form-group"><label>Growth Rate (%)</label><input type="number" id="sGrowth" value="25" /></div>
+                </div>
+                <div class="form-group"><label>Description</label><textarea id="sDesc" placeholder="Describe impact, technology, and market..."></textarea></div>
+                <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:4px;">
+                  <button type="button" class="btn btn-ghost btn-sm" onclick="clearForm('main')">Clear</button>
+                  <button type="submit" class="btn btn-primary btn-sm">Add Startup</button>
+                </div>
+                <div id="statusMain" class="status-msg"></div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: Matches -->
+        <div>
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Top Matches for You</span>
+              <button class="btn btn-ghost btn-sm" onclick="renderMatches()">↻ Refresh</button>
+            </div>
+            <div id="matchList">
+              <div class="empty-state"><div class="icon">🎯</div><p>Loading matches...</p></div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:16px;">
+            <div class="card-header">
+              <span class="card-title">All Startups</span>
+              <span id="startupCountBadge" class="tag">0</span>
+            </div>
+            <div id="startupListDash">
+              <div class="empty-state"><div class="icon">🌱</div><p>No startups yet.</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: DATABASE -->
+    <div id="tab-database" class="tab-panel">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Startup Database</span>
+          <div style="display:flex;gap:8px;">
+            <input type="text" id="dbSearch" placeholder="Search startups..." style="width:220px;padding:7px 12px;font-size:13px;" oninput="renderDatabase()" />
+            <select id="dbFilter" style="padding:7px 12px;font-size:13px;width:140px;" onchange="renderDatabase()">
+              <option value="">All Sectors</option>
+              <option value="Climate Tech">Climate Tech</option>
+              <option value="Energy">Energy</option>
+              <option value="Agriculture">Agriculture</option>
+              <option value="Transport">Transport</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Sector</th>
+                <th>Revenue</th>
+                <th>Growth</th>
+                <th>ESG</th>
+                <th>CO2 Red.</th>
+                <th>Risk</th>
+                <th>Impact</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="dbTableBody">
+              <tr><td colspan="10" style="text-align:center;color:var(--muted);padding:24px;">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: REPORTS -->
+    <div id="tab-reports" class="tab-panel">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <div class="card-title" style="font-family:'Syne',sans-serif;font-size:20px;">Saved Reports</div>
+        <button class="btn btn-accent" onclick="generateReport()">⬡ Generate New Report</button>
+      </div>
+      <div id="reportsList">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <!-- TAB: ADD STARTUP -->
+    <div id="tab-add" class="tab-panel">
+      <div class="card" style="max-width:700px;margin:0 auto;">
+        <div class="card-header">
+          <span class="card-title">Register a New Startup</span>
+        </div>
+        <form id="startupFormFull" autocomplete="off" onsubmit="submitStartup(event, 'full')">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Startup Name *</label>
+              <input type="text" id="fName" required placeholder="e.g. EcoNova Energy" />
+            </div>
+            <div class="form-group">
+              <label>Sector *</label>
+              <select id="fSector" required>
+                <option value="Climate Tech">Climate Tech</option>
+                <option value="Energy">Energy</option>
+                <option value="Agriculture">Agriculture</option>
+                <option value="Transport">Transport</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Annual Revenue ($)</label><input type="number" id="fRevenue" min="0" placeholder="150000" /></div>
+            <div class="form-group"><label>Burn Rate ($/yr)</label><input type="number" id="fBurn" min="0" placeholder="70000" /></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Team Size</label><input type="number" id="fTeam" min="1" value="5" /></div>
+            <div class="form-group"><label>Growth Rate (%)</label><input type="number" id="fGrowth" value="25" /></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>ESG Score (0–100) <span data-tip="Environmental, Social & Governance rating">ⓘ</span></label>
+              <input type="number" id="fEsg" min="0" max="100" value="70" />
+              <div class="progress-bar"><div class="progress-fill fill-accent" id="fEsgBar" style="width:70%"></div></div>
+            </div>
+            <div class="form-group">
+              <label>CO2 Reduction (tonnes/yr) <span data-tip="Annual carbon reduction in metric tonnes">ⓘ</span></label>
+              <input type="number" id="fCo2" min="0" value="200" />
+            </div>
+          </div>
+          <div class="form-group"><label>Impact Narrative / Description</label><textarea id="fDesc" placeholder="Describe your solution, target market, and environmental impact..."></textarea></div>
+          <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:8px;">
+            <button type="button" class="btn btn-ghost" onclick="clearForm('full')">Clear</button>
+            <button type="submit" class="btn btn-primary">Register Startup</button>
+          </div>
+          <div id="statusFull" class="status-msg"></div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <!-- INVESTOR PREFERENCES MODAL -->
+  <div id="prefsModal" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <span class="modal-title">Edit Investor Preferences</span>
+        <button class="close-btn" onclick="closePrefsModal()">×</button>
+      </div>
+      <form id="prefsForm" onsubmit="savePrefs(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Investor / Firm Name</label>
+            <input type="text" id="pName" required placeholder="GreenVentures VC" />
+          </div>
+          <div class="form-group">
+            <label>Min Investment ($)</label>
+            <input type="number" id="pMinInv" min="0" placeholder="100000" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Sectors of Focus</label>
+          <div class="sector-chips" id="sectorChips">
+            <label class="sector-chip" onclick="toggleSector(this)"><input type="checkbox" value="Climate Tech" />🌍 Climate Tech</label>
+            <label class="sector-chip" onclick="toggleSector(this)"><input type="checkbox" value="Energy" />⚡ Energy</label>
+            <label class="sector-chip" onclick="toggleSector(this)"><input type="checkbox" value="Agriculture" />🌾 Agriculture</label>
+            <label class="sector-chip" onclick="toggleSector(this)"><input type="checkbox" value="Transport" />🚗 Transport</label>
+            <label class="sector-chip" onclick="toggleSector(this)"><input type="checkbox" value="Other" />+ Other</label>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Risk Appetite</label>
+            <select id="pRisk">
+              <option value="Low">Low</option>
+              <option value="Medium" selected>Medium</option>
+              <option value="High">High</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Impact Focus</label>
+            <select id="pImpact">
+              <option value="ESG">ESG</option>
+              <option value="CO2">CO2 Reduction</option>
+              <option value="Both" selected>Both</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group"><label>Description / Notes</label><textarea id="pDesc" placeholder="What are you looking for?"></textarea></div>
+        <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:8px;">
+          <button type="button" class="btn btn-ghost" onclick="closePrefsModal()">Cancel</button>
+          <button type="submit" class="btn btn-accent">Save Preferences</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- STARTUP DETAIL MODAL -->
+  <div id="detailModal" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <span class="modal-title" id="detailModalTitle">Startup Detail</span>
+        <button class="close-btn" onclick="closeDetailModal()">×</button>
+      </div>
+      <div id="detailModalContent"></div>
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px;">
+        <button class="btn btn-danger btn-sm" id="detailDeleteBtn">🗑 Delete</button>
+        <button class="btn btn-ghost btn-sm" onclick="closeDetailModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <footer style="text-align:center;color:var(--muted);padding:32px 20px;font-size:13px;border-top:1px solid var(--border);margin-top:40px;position:relative;z-index:1;">
+    Foundathon 3.0 — ClimaMatch Intelligence Platform &nbsp;·&nbsp; MVP Demo Build
+  </footer>
+
+  <script>
+  // =============================================
+  // DATA STORE
+  // =============================================
+  const STORAGE_KEY = "foundathon3_v2";
+  let appData = {
+    investor: {
+      name: "GreenHorizon Capital",
+      minInvestment: 250000,
+      sectors: ["Climate Tech", "Energy"],
+      riskAppetite: "Medium",
+      impactFocus: "Both",
+      description: "Early-stage climate solutions with strong ESG ratings and measurable CO₂ reduction. We back founders with deep domain expertise and scalable business models."
+    },
+    startups: [
+      { id:"s001", name:"EcoNova Energy", sector:"Climate Tech", revenue:150000, burnRate:70000, teamSize:8, growthRate:35, esgScore:78, co2Reduction:250, description:"Revolutionizing grid-scale energy storage with novel battery technology, dramatically reducing reliance on fossil fuels across urban grids.", risk:0, impact:0 },
+      { id:"s002", name:"AgriSense Solutions", sector:"Agriculture", revenue:80000, burnRate:60000, teamSize:5, growthRate:20, esgScore:85, co2Reduction:1200, description:"AI-powered precision farming platform that optimizes water and nutrient usage, directly cutting emissions in agricultural supply chains.", risk:0, impact:0 },
+      { id:"s003", name:"GreenWheels Mobility", sector:"Transport", revenue:250000, burnRate:120000, teamSize:15, growthRate:45, esgScore:65, co2Reduction:400, description:"Electric vehicle subscription service making sustainable urban transport accessible and affordable to underserved communities.", risk:0, impact:0 },
+      { id:"s004", name:"BioFuel Innovations", sector:"Energy", revenue:50000, burnRate:80000, teamSize:6, growthRate:15, esgScore:70, co2Reduction:800, description:"Next-generation biofuels from agricultural waste — offering a drop-in cleaner alternative to petroleum across industrial sectors.", risk:0, impact:0 },
+      { id:"s005", name:"CarbonTrace AI", sector:"Climate Tech", revenue:320000, burnRate:90000, teamSize:12, growthRate:60, esgScore:92, co2Reduction:3400, description:"SaaS platform for enterprise-level Scope 1, 2 & 3 emissions tracking, with automated reporting and regulatory compliance modules.", risk:0, impact:0 },
+      { id:"s006", name:"HydroVolt Systems", sector:"Energy", revenue:420000, burnRate:180000, teamSize:20, growthRate:38, esgScore:80, co2Reduction:920, description:"Micro-hydropower turbines for off-grid rural electrification in South Asia and Sub-Saharan Africa, replacing diesel generators.", risk:0, impact:0 }
+    ],
+    reports: [
+      {
+        id:"r001",
+        title:"Q1 2025 Climate Tech Landscape",
+        date:"2025-01-15",
+        summary:"Comprehensive analysis of 6 portfolio-ready startups across energy, agriculture, and mobility sectors. CarbonTrace AI and AgriSense lead on impact scores.",
+        metrics: { avgImpact: 0, avgRisk: 0, topMatch: "CarbonTrace AI", totalCO2: 0 }
+      }
+    ]
+  };
+
+  // =============================================
+  // CORE LOGIC
+  // =============================================
+  function computeScores(s) {
+    const rev = +s.revenue||0, burn = +s.burnRate||0, growth = +s.growthRate||0;
+    const esg = +s.esgScore||0, co2 = +s.co2Reduction||0;
+    let risk = 6;
+    if (growth>30) risk-=2;
+    if (growth>50) risk-=3;
+    risk -= Math.max(0, Math.min(3, rev/200000));
+    if (burn>rev*1.5 && rev>0) risk+=2;
+    if (burn>rev*3) risk+=3;
+    if (esg<50) risk+=1;
+    s.risk = Math.max(1, Math.min(10, Math.round(risk)));
+    let impact = (esg/10) + Math.max(0, Math.min(10, co2/150));
+    s.impact = Math.max(0, Math.min(10, Math.round(impact*10)/10));
+  }
+
+  function matchScore(startup, prefs) {
+    let score=0;
+    const {riskAppetite:invRisk, impactFocus:invImpact, sectors} = prefs;
+    if (invRisk==="Low" && startup.risk<=4) score+=4;
+    else if (invRisk==="Medium" && startup.risk<=6) score+=2;
+    else if (invRisk==="High") score+=1;
+    if (invImpact==="CO2" && startup.co2Reduction>0) score+=3;
+    if (invImpact==="ESG" && startup.esgScore>60) score+=2;
+    if (invImpact==="Both") {
+      if (startup.co2Reduction>0) score+=1.5;
+      if (startup.esgScore>60) score+=1.5;
+    }
+    if (sectors.includes(startup.sector)) score+=2;
+    if (+prefs.minInvestment>0 && prefs.minInvestment <= +startup.revenue*1.5) score+=1;
+    return score;
+  }
+
+  function saveAll() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(appData)); } catch(e) {}
+  }
+  function loadAll() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) { appData = { ...appData, ...JSON.parse(raw) }; }
+    } catch(e) {}
+    appData.startups.forEach(computeScores);
+    if (appData.reports.length > 0) refreshReportMetrics();
+  }
+
+  function refreshReportMetrics() {
+    if (!appData.reports[0]) return;
+    const m = appData.reports[0].metrics;
+    if (appData.startups.length===0) return;
+    m.avgImpact = +(appData.startups.reduce((a,s)=>a+s.impact,0)/appData.startups.length).toFixed(1);
+    m.avgRisk = +(appData.startups.reduce((a,s)=>a+s.risk,0)/appData.startups.length).toFixed(1);
+    m.totalCO2 = appData.startups.reduce((a,s)=>a+(+s.co2Reduction||0),0);
+    const scored = appData.startups.map(s=>({s,score:matchScore(s,appData.investor)})).sort((a,b)=>b.score-a.score);
+    m.topMatch = scored.length>0 ? scored[0].s.name : '—';
+  }
+
+  // =============================================
+  // UI RENDERS
+  // =============================================
+  function updateStats() {
+    document.getElementById('statStartups').textContent = appData.startups.length;
+    const matches = appData.startups.map(s=>matchScore(s,appData.investor)).filter(v=>v>0).length;
+    document.getElementById('statMatches').textContent = matches;
+    document.getElementById('statReports').textContent = appData.reports.length;
+  }
+
+  function renderInvestorProfile() {
+    const p = appData.investor;
+    const el = document.getElementById('prefsDisplay');
+    const riskColor = p.riskAppetite==='Low'?'accent':p.riskAppetite==='High'?'danger':'warn';
+    el.innerHTML = `
+      <div class="pref-row"><span class="pref-label">Firm / Investor</span><span class="pref-value highlight">${p.name||'—'}</span></div>
+      <div class="pref-row"><span class="pref-label">Min Investment</span><span class="pref-value highlight">$${(+p.minInvestment||0).toLocaleString()}</span></div>
+      <div class="pref-row">
+        <span class="pref-label">Sectors</span>
+        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:4px;">
+          ${(p.sectors||[]).map(s=>`<span class="tag primary">${s}</span>`).join('')||'<span class="tag">All</span>'}
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:4px;">
+        <div class="pref-row" style="flex:1"><span class="pref-label">Risk</span><span class="tag ${riskColor}" style="margin-top:4px;">${p.riskAppetite}</span></div>
+        <div class="pref-row" style="flex:1"><span class="pref-label">Impact Focus</span><span class="tag accent" style="margin-top:4px;">${p.impactFocus}</span></div>
+      </div>
+      <div class="pref-row" style="margin-top:8px;"><span class="pref-label">Notes</span><span class="pref-value" style="font-size:13px;">${p.description||'—'}</span></div>
+    `;
+  }
+
+  function renderMatches() {
+    const el = document.getElementById('matchList');
+    if (!appData.startups.length) {
+      el.innerHTML = `<div class="empty-state"><div class="icon">🎯</div><p>Add startups to see matches.</p></div>`;
+      return;
+    }
+    const scored = appData.startups.map(s=>({s,score:matchScore(s,appData.investor)})).filter(i=>i.score>0).sort((a,b)=>b.score-a.score);
+    if (!scored.length) {
+      el.innerHTML = `<div class="empty-state"><div class="icon">🔍</div><p>No strong matches for your current preferences.</p></div>`;
+      return;
+    }
+    el.innerHTML = scored.slice(0,5).map((item,i)=>{
+      const {s,score} = item;
+      const cls = score>=8?'match-high':score>=5?'match-mid':'match-low';
+      const riskBar = (s.risk/10)*100;
+      const impactBar = (s.impact/10)*100;
+      const fillRisk = s.risk<=4?'fill-accent':s.risk<=6?'fill-warn':'fill-danger';
+      const rankBadge = i===0?'🥇':i===1?'🥈':i===2?'🥉':'';
+      return `<div class="startup-card fade-in" onclick="showDetail('${s.id}')">
+        <div class="startup-card-header">
+          <div>
+            <div class="startup-name">${rankBadge} ${s.name}</div>
+            <span class="tag" style="margin-top:4px;">${s.sector}</span>
+          </div>
+        </div>
+        <p class="startup-desc">${(s.description||'').substring(0,130)}${s.description && s.description.length>130?'...':''}</p>
+        <div style="display:flex;gap:12px;margin-bottom:8px;">
+          <div style="flex:1">
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:3px;"><span>Risk</span><span>${s.risk}/10</span></div>
+            <div class="progress-bar"><div class="progress-fill ${fillRisk}" style="width:${riskBar}%"></div></div>
+          </div>
+          <div style="flex:1">
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:3px;"><span>Impact</span><span>${s.impact}/10</span></div>
+            <div class="progress-bar"><div class="progress-fill fill-accent" style="width:${impactBar}%"></div></div>
+          </div>
+        </div>
+        <div class="startup-metrics">
+          <span class="tag">Growth: ${s.growthRate}%</span>
+          <span class="tag">CO₂: ${(+s.co2Reduction).toLocaleString()} t/yr</span>
+          <span class="tag">Team: ${s.teamSize}</span>
+        </div>
+        <div class="match-badge ${cls}">${score}</div>
+      </div>`;
+    }).join('');
+    updateStats();
+  }
+
+  function renderStartupListDash() {
+    const el = document.getElementById('startupListDash');
+    const badge = document.getElementById('startupCountBadge');
+    badge.textContent = appData.startups.length;
+    if (!appData.startups.length) {
+      el.innerHTML = `<div class="empty-state"><div class="icon">🌱</div><p>No startups yet.</p></div>`;
+      return;
+    }
+    el.innerHTML = appData.startups.map(s=>`
+      <div class="startup-card fade-in" onclick="showDetail('${s.id}')">
+        <div class="startup-card-header">
+          <div>
+            <div class="startup-name">${s.name}</div>
+            <div class="startup-metrics" style="margin-top:4px;">
+              <span class="tag primary">${s.sector}</span>
+              <span class="tag">Risk: ${s.risk}</span>
+              <span class="tag accent">Impact: ${s.impact}</span>
+            </div>
+          </div>
+        </div>
+        <p class="startup-desc">${(s.description||'').substring(0,100)}${s.description && s.description.length>100?'...':''}</p>
+      </div>
+    `).join('');
+  }
+
+  function renderDatabase() {
+    const q = (document.getElementById('dbSearch').value||'').toLowerCase();
+    const filter = document.getElementById('dbFilter').value;
+    const tbody = document.getElementById('dbTableBody');
+    let data = appData.startups.filter(s=>{
+      const matchQ = !q || s.name.toLowerCase().includes(q) || (s.description||'').toLowerCase().includes(q);
+      const matchF = !filter || s.sector===filter;
+      return matchQ && matchF;
+    });
+    if (!data.length) {
+      tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;color:var(--muted);padding:24px;">No results found.</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = data.map((s,i)=>{
+      const riskTag = s.risk<=4?'accent':s.risk<=6?'warn':'danger';
+      const impactTag = s.impact>=7?'accent':s.impact>=4?'primary':'';
+      return `<tr>
+        <td style="color:var(--muted);font-size:12px;">${i+1}</td>
+        <td><strong style="color:var(--text);cursor:pointer;" onclick="showDetail('${s.id}')">${s.name}</strong></td>
+        <td><span class="tag">${s.sector}</span></td>
+        <td>$${(+s.revenue||0).toLocaleString()}</td>
+        <td>${s.growthRate}%</td>
+        <td>${s.esgScore}</td>
+        <td>${(+s.co2Reduction||0).toLocaleString()} t</td>
+        <td><span class="tag ${riskTag}">${s.risk}/10</span></td>
+        <td><span class="tag ${impactTag}">${s.impact}/10</span></td>
+        <td>
+          <button class="btn btn-ghost btn-sm" onclick="showDetail('${s.id}')">View</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteStartup('${s.id}',event)" style="margin-left:4px;">Del</button>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  function renderReports() {
+    refreshReportMetrics();
+    const el = document.getElementById('reportsList');
+    if (!appData.reports.length) {
+      el.innerHTML = `<div class="empty-state" style="padding:40px;"><div class="icon">📋</div><p>No reports yet. Generate one above.</p></div>`;
+      return;
+    }
+    el.innerHTML = appData.reports.map(r=>`
+      <div class="report-card fade-in">
+        <div class="report-header">
+          <div>
+            <div class="report-title">📊 ${r.title}</div>
+            <div class="report-meta">Generated: ${r.date} &nbsp;·&nbsp; Based on ${appData.startups.length} startups</div>
+          </div>
+          <button class="btn btn-danger btn-sm" onclick="deleteReport('${r.id}')">Delete</button>
+        </div>
+        <p style="font-size:13px;color:var(--muted2);margin-bottom:14px;">${r.summary}</p>
+        <div class="report-grid">
+          <div class="report-metric">
+            <div class="val" style="color:var(--accent)">${r.metrics.avgImpact}</div>
+            <div class="lbl">Avg Impact Score</div>
+          </div>
+          <div class="report-metric">
+            <div class="val" style="color:var(--warn)">${r.metrics.avgRisk}</div>
+            <div class="lbl">Avg Risk Score</div>
+          </div>
+          <div class="report-metric">
+            <div class="val" style="color:var(--primary)">${r.metrics.totalCO2.toLocaleString()}</div>
+            <div class="lbl">Total CO₂ Red. (t/yr)</div>
+          </div>
+        </div>
+        <div style="margin-top:14px;padding:12px 16px;background:var(--card);border-radius:10px;border:1px solid var(--border);display:flex;align-items:center;gap:10px;">
+          <span style="font-size:18px;">🏆</span>
+          <div>
+            <div style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;">Top Match</div>
+            <div style="font-weight:600;color:var(--gold);">${r.metrics.topMatch}</div>
+          </div>
+        </div>
+        <div style="margin-top:14px;">
+          <div class="section-label" style="margin-bottom:10px;">Startup Breakdown</div>
+          ${appData.startups.slice(0,6).map(s=>`
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+              <span style="font-size:13px;flex:1;color:var(--muted2);">${s.name}</span>
+              <div style="flex:2"><div class="progress-bar"><div class="progress-fill fill-accent" style="width:${(s.impact/10)*100}%"></div></div></div>
+              <span style="font-size:12px;color:var(--muted);min-width:50px;text-align:right;">Impact ${s.impact}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `).join('');
+    document.getElementById('statReports').textContent = appData.reports.length;
+  }
+
+  // =============================================
+  // ACTIONS
+  // =============================================
+  function submitStartup(e, formType) {
+    e.preventDefault();
+    const prefix = formType==='full' ? 'f' : 's';
+    const s = {
+      id: 's' + Date.now(),
+      name: document.getElementById(prefix+'Name').value.trim(),
+      sector: document.getElementById(prefix+'Sector').value,
+      revenue: +document.getElementById(prefix+'Revenue').value||0,
+      burnRate: +document.getElementById(prefix+'Burn').value||0,
+      teamSize: +document.getElementById(prefix+'Team').value||1,
+      growthRate: +document.getElementById(prefix+'Growth').value||0,
+      esgScore: +document.getElementById(prefix+'Esg').value||0,
+      co2Reduction: +document.getElementById(prefix+'Co2').value||0,
+      description: document.getElementById(prefix+'Desc').value.trim(),
+      risk:0, impact:0
+    };
+    if (!s.name) { showStatus('status'+formType.charAt(0).toUpperCase()+formType.slice(1), 'Name is required.', 'error'); return; }
+    const existing = appData.startups.findIndex(x=>x.name===s.name);
+    computeScores(s);
+    if (existing>-1) { appData.startups[existing]={...appData.startups[existing],...s}; toast('✏️','Startup updated'); }
+    else { appData.startups.push(s); toast('✅','Startup added successfully'); }
+    saveAll(); renderAll();
+    e.target.reset();
+    showStatus('status'+(formType==='full'?'Full':'Main'), 'Startup saved!', 'success');
+  }
+
+  function deleteStartup(id, e) {
+    if(e) e.stopPropagation();
+    appData.startups = appData.startups.filter(s=>s.id!==id);
+    saveAll(); renderAll(); closeDetailModal();
+    toast('🗑️','Startup removed');
+  }
+
+  function generateReport() {
+    if (!appData.startups.length) { toast('⚠️','No startups to report on'); return; }
+    const now = new Date();
+    const dateStr = now.toISOString().split('T')[0];
+    const scored = appData.startups.map(s=>({s,score:matchScore(s,appData.investor)})).sort((a,b)=>b.score-a.score);
+    const topName = scored.length>0 ? scored[0].s.name : '—';
+    const avgI = +(appData.startups.reduce((a,s)=>a+s.impact,0)/appData.startups.length).toFixed(1);
+    const avgR = +(appData.startups.reduce((a,s)=>a+s.risk,0)/appData.startups.length).toFixed(1);
+    const totalCo2 = appData.startups.reduce((a,s)=>a+(+s.co2Reduction||0),0);
+    const report = {
+      id: 'r'+Date.now(),
+      title: `Portfolio Analysis — ${now.toLocaleDateString('en-US',{month:'long',year:'numeric'})}`,
+      date: dateStr,
+      summary: `Analysis of ${appData.startups.length} startups across ${[...new Set(appData.startups.map(s=>s.sector))].join(', ')}. Top recommendation based on your ${appData.investor.riskAppetite} risk appetite and ${appData.investor.impactFocus} focus: ${topName}.`,
+      metrics: { avgImpact: avgI, avgRisk: avgR, topMatch: topName, totalCO2: totalCo2 }
+    };
+    appData.reports.unshift(report);
+    saveAll(); renderReports();
+    toast('📊','Report generated!');
+    switchTab('reports');
+  }
+
+  function deleteReport(id) {
+    appData.reports = appData.reports.filter(r=>r.id!==id);
+    saveAll(); renderReports();
+    toast('🗑️','Report deleted');
+  }
+
+  function showDetail(id) {
+    const s = appData.startups.find(x=>x.id===id);
+    if (!s) return;
+    document.getElementById('detailModalTitle').textContent = s.name;
+    const mScore = matchScore(s, appData.investor);
+    const mClass = mScore>=8?'match-high':mScore>=5?'match-mid':'match-low';
+    document.getElementById('detailModalContent').innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
+        <div>
+          <span class="tag primary" style="margin-right:6px;">${s.sector}</span>
+          <span class="tag ${mClass}" style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;">Match: ${mScore}</span>
+        </div>
+        <div class="score-ring-wrap">
+          <div class="score-ring"><span class="score-val" style="color:${s.risk<=4?'var(--accent)':s.risk<=6?'var(--warn)':'var(--danger)'}">${s.risk}</span><span class="score-lbl">Risk</span></div>
+          <div class="score-ring"><span class="score-val" style="color:var(--accent)">${s.impact}</span><span class="score-lbl">Impact</span></div>
+        </div>
+      </div>
+      <p style="font-size:14px;color:var(--muted2);margin-bottom:18px;line-height:1.6;">${s.description||'No description provided.'}</p>
+      <div class="report-grid" style="grid-template-columns:repeat(3,1fr);">
+        <div class="report-metric"><div class="val" style="color:var(--primary)">$${(+s.revenue||0).toLocaleString()}</div><div class="lbl">Revenue</div></div>
+        <div class="report-metric"><div class="val" style="color:var(--warn)">$${(+s.burnRate||0).toLocaleString()}</div><div class="lbl">Burn Rate</div></div>
+        <div class="report-metric"><div class="val">${s.growthRate}%</div><div class="lbl">Growth</div></div>
+        <div class="report-metric"><div class="val" style="color:var(--accent)">${s.esgScore}</div><div class="lbl">ESG Score</div></div>
+        <div class="report-metric"><div class="val" style="color:var(--accent)">${(+s.co2Reduction||0).toLocaleString()}</div><div class="lbl">CO₂ t/yr</div></div>
+        <div class="report-metric"><div class="val">${s.teamSize}</div><div class="lbl">Team Size</div></div>
+      </div>
+    `;
+    document.getElementById('detailDeleteBtn').onclick = () => deleteStartup(id);
+    document.getElementById('detailModal').classList.add('open');
+  }
+  function closeDetailModal() { document.getElementById('detailModal').classList.remove('open'); }
+
+  // =============================================
+  // PREFERENCES MODAL
+  // =============================================
+  function openPrefsModal() {
+    const p = appData.investor;
+    document.getElementById('pName').value = p.name||'';
+    document.getElementById('pMinInv').value = p.minInvestment||0;
+    document.getElementById('pRisk').value = p.riskAppetite||'Medium';
+    document.getElementById('pImpact').value = p.impactFocus||'Both';
+    document.getElementById('pDesc').value = p.description||'';
+    document.querySelectorAll('#sectorChips .sector-chip').forEach(chip=>{
+      const val = chip.querySelector('input').value;
+      chip.classList.toggle('selected', (p.sectors||[]).includes(val));
+      chip.querySelector('input').checked = (p.sectors||[]).includes(val);
+    });
+    document.getElementById('prefsModal').classList.add('open');
+  }
+  function closePrefsModal() { document.getElementById('prefsModal').classList.remove('open'); }
+  function toggleSector(chip) {
+    setTimeout(()=>{
+      const checked = chip.querySelector('input').checked;
+      chip.classList.toggle('selected', checked);
+    }, 0);
+  }
+  function savePrefs(e) {
+    e.preventDefault();
+    appData.investor = {
+      ...appData.investor,
+      name: document.getElementById('pName').value.trim(),
+      minInvestment: +document.getElementById('pMinInv').value||0,
+      sectors: Array.from(document.querySelectorAll('#sectorChips input:checked')).map(c=>c.value),
+      riskAppetite: document.getElementById('pRisk').value,
+      impactFocus: document.getElementById('pImpact').value,
+      description: document.getElementById('pDesc').value.trim()
+    };
+    saveAll(); renderAll(); closePrefsModal();
+    toast('✅','Preferences saved');
+  }
+
+  // =============================================
+  // TABS
+  // =============================================
+  function switchTab(name) {
+    document.querySelectorAll('.tab-btn').forEach((b,i)=>{
+      const names = ['dashboard','database','reports','add'];
+      b.classList.toggle('active', names[i]===name);
+    });
+    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+    document.getElementById('tab-'+name).classList.add('active');
+    if (name==='database') renderDatabase();
+    if (name==='reports') renderReports();
+  }
+
+  function toggleQuickForm() {
+    const form = document.getElementById('quickAddForm');
+    const btn = document.getElementById('toggleQuickAdd');
+    const open = form.classList.toggle('open');
+    btn.textContent = open ? '− Collapse' : '+ Expand';
+  }
+
+  // =============================================
+  // UTILITIES
+  // =============================================
+  function showStatus(id, msg, type) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = msg;
+    el.className = 'status-msg '+(type||'');
+    setTimeout(()=>{ el.style.display='none'; }, 3000);
+  }
+
+  function clearForm(type) {
+    if (type==='full') document.getElementById('startupFormFull').reset();
+    else document.getElementById('startupFormMain').reset();
+  }
+
+  let toastTimer;
+  function toast(icon, msg) {
+    const t = document.getElementById('toast');
+    document.getElementById('toastIcon').textContent = icon;
+    document.getElementById('toastMsg').textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=>t.classList.remove('show'), 3200);
+  }
+
+  // ESG progress bar on full form
+  document.getElementById('fEsg') && document.getElementById('fEsg').addEventListener('input', function(){
+    document.getElementById('fEsgBar').style.width = Math.min(100,+this.value)+'%';
+  });
+
+  function renderAll() {
+    renderInvestorProfile();
+    renderMatches();
+    renderStartupListDash();
+    updateStats();
+  }
+
+  // Close modals on overlay click
+  document.getElementById('prefsModal').addEventListener('click', e=>{ if(e.target===e.currentTarget) closePrefsModal(); });
+  document.getElementById('detailModal').addEventListener('click', e=>{ if(e.target===e.currentTarget) closeDetailModal(); });
+
+  // =============================================
+  // INIT
+  // =============================================
+  window.addEventListener('load', ()=>{
+    loadAll();
+    renderAll();
+    renderReports();
+  });
+  </script>
+</body>
+</html>
